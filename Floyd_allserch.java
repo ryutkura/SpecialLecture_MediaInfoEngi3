@@ -16,7 +16,7 @@ class Floyd_allserch{
     }
 
     public static void main(String args[]){
-        int N = 5;
+        int N = 10;
         int[] Flv = new int[N];
 
         long startTime = System.nanoTime();
@@ -30,11 +30,22 @@ class Floyd_allserch{
                         Flv[3] = ad;
                         for(int ae=0;ae<2;ae++){
                             Flv[4] = ae;
-                            System.out.println("Floyd–â‘è‚Ì¡‰ñ‚Ì‰ñ“š‚Í"+calcflo(Flv, N)+"‚Å‚·B");
-                            // for(int i=0;i<5;i++){
-                            // System.out.print(Flv[i]);
-                            // } 
-                            // System.out.println("");              
+                            for(int af=0;af<2;af++){
+                                Flv[5] = af;
+                                for(int ag=0;ag<2;ag++){
+                                    Flv[6] = ag;
+                                    for(int ah=0;ah<2;ah++){
+                                        Flv[7] = ah;
+                                        for(int ai=0;ai<2;ai++){
+                                            Flv[8] = ai;
+                                            for(int aj=0;aj<2;aj++){
+                                                Flv[9] = aj;
+                                                System.out.println("Floyd–â‘è‚Ì¡‰ñ‚Ì‰ñ“š‚Í"+calcflo(Flv, N)+"‚Å‚·B");
+                                            }
+                                        }
+                                    }
+                                }
+                            }              
                         }
                     }
                 }
@@ -43,7 +54,7 @@ class Floyd_allserch{
         long endTime = System.nanoTime();
         System.out.println("ˆ—ŽžŠÔF" + (endTime - startTime) + " ƒiƒm•b");
 
-        
+                            
 
     }
 }
