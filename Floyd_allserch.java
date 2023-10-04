@@ -31,6 +31,10 @@ class Floyd_allserch{
                         for(int ae=0;ae<2;ae++){
                             Flv[4] = ae;
                             System.out.println("Floyd–â‘è‚Ì¡‰ñ‚Ì‰ñ“š‚Í"+calcflo(Flv, N)+"‚Å‚·B");
+                            // for(int i=0;i<5;i++){
+                            // System.out.print(Flv[i]);
+                            // } 
+                            // System.out.println("");              
                         }
                     }
                 }
@@ -38,6 +42,8 @@ class Floyd_allserch{
         }
         long endTime = System.nanoTime();
         System.out.println("ˆ—ŽžŠÔF" + (endTime - startTime) + " ƒiƒm•b");
+
+        
 
     }
 }
