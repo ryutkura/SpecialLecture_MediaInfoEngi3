@@ -71,6 +71,82 @@ class Floyd_allserch{
         for(int ay=0;ay<2;ay++){
         Flv[24] = ay;
         System.out.println("Floyd–â‘è‚Ì¡‰ñ‚Ì‰ñ“š‚Í"+calcflo(Flv, N)+"‚Å‚·B");
+        for(int az=0;az<2;az++){
+        Flv[25] = az;
+        for(int ba=0;ba<2;ba++){
+        Flv[26] = ba;
+        for(int bb=0;bb<2;bb++){
+        Flv[27] = bb;
+        for(int bc=0;bc<2;bc++){
+        Flv[28] = bc;
+        for(int bd=0;bd<2;bd++){
+        Flv[29] = bd;
+        for(int be=0;be<2;be++){
+        Flv[30] = be;
+        for(int bf=0;bf<2;bf++){
+        Flv[31] = bf;
+        for(int bg=0;bg<2;bg++){
+        Flv[32] = bg;
+        for(int bh=0;bh<2;bh++){
+        Flv[33] = bh;
+        for(int bi=0;bi<2;bi++){
+        Flv[34] = bi;
+        for(int bj=0;bj<2;bj++){
+        Flv[35] = bj;
+        for(int bk=0;bk<2;bk++){
+        Flv[36] = bk;
+        for(int bl=0;bl<2;bl++){
+        Flv[37] = bl;
+        for(int bm=0;bm<2;bm++){
+        Flv[38] = bm;
+        for(int bn=0;bn<2;bn++){
+        Flv[39] = bn;
+        for(int bo=0;bo<2;bo++){
+        Flv[40] = bo;
+        for(int bp=0;bp<2;bp++){
+        Flv[41] = bp;
+        for(int bq=0;bq<2;bq++){
+        Flv[42] = bq;
+        for(int br=0;br<2;br++){
+        Flv[43] = br;
+        for(int bs=0;bs<2;bs++){
+        Flv[44] = bs;                                                                                                    
+        for(int bt=0;bt<2;bt++){
+        Flv[45] = bt;
+        for(int bu=0;bu<2;bu++){
+        Flv[46] = bu;
+        for(int bv=0;bv<2;bv++){
+        Flv[47] = bv;
+        for(int bw=0;bw<2;bw++){
+        Flv[48] = bw;
+        for(int bx=0;bx<2;bx++){
+        Flv[49] = bx;
+        System.out.println("Floyd–â‘è‚Ì¡‰ñ‚Ì‰ñ“š‚Í"+calcflo(Flv, N)+"‚Å‚·B");
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
         }
         }
         }
