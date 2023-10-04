@@ -70,7 +70,6 @@ class Floyd_allserch{
         Flv[23] = ax;
         for(int ay=0;ay<2;ay++){
         Flv[24] = ay;
-        System.out.println("Floyd–â‘è‚Ì¡‰ñ‚Ì‰ñ“š‚Í"+calcflo(Flv, N)+"‚Å‚·B");
         for(int az=0;az<2;az++){
         Flv[25] = az;
         for(int ba=0;ba<2;ba++){
