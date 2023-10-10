@@ -52,7 +52,7 @@ class Floyd_GA{
     }
     
     public static void main(String args[]){
-        int indiv[][] = new int[10][11];
+        int indiv[][] = new int[10][11];//[ŒÂ‘Ì”][Œ…”]‚Å‚»‚ê‚¼‚ê‚±‚±‚¾‚¯•Ï‚¦‚Ä‚à“®‚­‚Í‚¸
         double fit_value[] = new double[10];
         init(indiv);
         fitness(indiv,fit_value);
