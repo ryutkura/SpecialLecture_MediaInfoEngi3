@@ -1,5 +1,3 @@
-import java.util.Arrays;
-
 class Floyd_GA{
     public static void fitness(int[][] indiv,double[] fit_value){
         double ans = 0;
@@ -7,9 +5,9 @@ class Floyd_GA{
         double B = 0;
         double ab = 1;
 
-        Arrays.fill(fit_value, 0);
-
         for(int i=0;i<indiv.length;i++){
+            A = 0;
+            B = 0;
             for(int j=0;j<11;j++){
                 if(indiv[i][j] == 1){
                     A = A + Math.sqrt(j+1);
@@ -18,11 +16,11 @@ class Floyd_GA{
                     B = B + Math.sqrt(j+1);
                 }
             }
+            fit_value[i] = 0;
             ab = A - B;
             ans = Math.abs(ab);
             fit_value[i] = ans;
         }
-        // return ans;
     }
     public static int[][] init(int[][] indiv){
         for(int i=0;i<indiv.length;i++){
@@ -43,22 +41,12 @@ class Floyd_GA{
             System.out.println(" "+fit_value[i]);
         }
     }
-    public static int[][] GA(int[][] indiv,double[] fit_value){
-        double num=0;
+    public static int[][] GA(int[][] indiv){
         for(int i=0;i<indiv.length;i++){
             for(int j=0;j<11;j++){
-                // num =  Math.random();
-                // if(num > 0.5){
-                //     indiv[i][j] = 1;
-                // }
-                // if(indiv[i][j] == 0){
-                    indiv[i][j] = 1;
-                // }
-                // else{
-                //     indiv[i][j] = 0;
-                // }
+                indiv[i][j] = 1;
+                //‚±‚±‚Ì’†g‚ğ‘‚«Š·‚¦‚½‚çGAƒvƒƒOƒ‰ƒ€‚ÌŠ®¬
             }
-            fitness(indiv, fit_value);
         }
         return indiv;
     }
@@ -71,7 +59,8 @@ class Floyd_GA{
         printvec(indiv,fit_value);
         for(int i=0;i<indiv.length;i++){
             System.out.println("‚½‚¾‚¢‚Ü"+(i+1)+"‰ñ–Ú");
-            GA(indiv,fit_value);
+            GA(indiv);
+            fitness(indiv, fit_value);
             printvec(indiv,fit_value);
         }
     }
