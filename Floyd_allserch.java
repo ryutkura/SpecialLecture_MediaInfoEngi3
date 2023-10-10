@@ -120,7 +120,7 @@ class Floyd_allserch{
         Flv[48] = bw;
         for(int bx=0;bx<2;bx++){
         Flv[49] = bx;
-        System.out.println("Floyd問題の今回の回答は"+calcflo(Flv, N)+"です。");
+        System.out.println("Floyd���̍���̉񓚂�"+calcflo(Flv, N)+"�ł��B");
         }
         }
         }
@@ -172,6 +172,6 @@ class Floyd_allserch{
         }
         }
         long endTime = System.nanoTime();
-        System.out.println("処理時間：" + (endTime - startTime) + " ナノ秒");
+        System.out.println("処�?時間?�?" + (endTime - startTime) + " ナノ�?");
     }
 }
