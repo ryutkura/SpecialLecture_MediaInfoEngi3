@@ -8,7 +8,7 @@ class Floyd_GA{
         for(int i=0;i<indiv.length;i++){
             A = 0;
             B = 0;
-            for(int j=0;j<11;j++){
+            for(int j=0;j<indiv[i].length;j++){
                 if(indiv[i][j] == 1){
                     A = A + Math.sqrt(j+1);
                 }
@@ -24,7 +24,7 @@ class Floyd_GA{
     }
     public static int[][] init(int[][] indiv){
         for(int i=0;i<indiv.length;i++){
-            for(int j=0;j<11;j++){
+            for(int j=0;j<indiv[i].length;j++){
                 double alpha = Math.random();
                 if(alpha>0.5){
                     indiv[i][j] = 1;
@@ -35,7 +35,7 @@ class Floyd_GA{
     }
     static void printvec(int[][] indiv, double[] fit_value){
         for(int i=0;i<indiv.length;i++){
-            for(int j=0;j<11;j++){
+            for(int j=0;j<indiv[i].length;j++){
                 System.out.print(" "+indiv[i][j]);
             }
             System.out.println(" "+fit_value[i]);
@@ -43,7 +43,7 @@ class Floyd_GA{
     }
     public static int[][] GA(int[][] indiv){
         for(int i=0;i<indiv.length;i++){
-            for(int j=0;j<11;j++){
+            for(int j=0;j<indiv[i].length;j++){
                 indiv[i][j] = 1;
                 //‚±‚±‚Ì’†g‚ð‘‚«Š·‚¦‚½‚çGAƒvƒƒOƒ‰ƒ€‚ÌŠ®¬
             }
