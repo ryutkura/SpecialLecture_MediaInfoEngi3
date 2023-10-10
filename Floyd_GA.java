@@ -29,6 +29,9 @@ class Floyd_GA{
                 if(alpha>0.5){
                     indiv[i][j] = 1;
                 }
+                else{
+                    indiv[i][j] = 0;
+                }
             }
         }
         return indiv;
