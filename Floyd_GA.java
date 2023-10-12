@@ -102,6 +102,9 @@ class Floyd_GA{
             memo[j][1] = rand2;
             memo[j][2] = rand3;
         }
+        for(int k=0;k<fit_value.length;k++){
+            fit_value[k] = 0;
+        }
         fitness(indiv,fit_value);
         printGA(indiv, fit_value,memo);
         printNote(fit_value,i);
