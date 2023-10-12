@@ -55,7 +55,7 @@ class Floyd_GA{
     static void printGA(int[][] indiv, double[] fit_value,int[][] memo){
         
         for(int i=0;i<indiv.length;i++){
-            System.out.print("("+memo[i][0]+","+memo[i][1]+") "+memo[i][2]);
+            System.out.print("("+memo[i][0]+","+memo[i][1]+") "+memo[i][2]+"F");
             for(int j=0;j<indiv[i].length;j++){
                 System.out.print(" "+indiv[i][j]);
             }
