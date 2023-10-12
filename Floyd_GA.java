@@ -1,5 +1,6 @@
 import java.security.SecureRandom;
 import java.util.Random;
+import java.util.Arrays;
 
 class Floyd_GA{
     public static void fitness(int[][] indiv,double[] fit_value){
@@ -44,12 +45,29 @@ class Floyd_GA{
             for(int j=0;j<indiv[i].length;j++){
                 System.out.print(" "+indiv[i][j]);
             }
-            System.out.println(" "+fit_value[i]);
+            System.out.println("F"+fit_value[i]);
         }
         System.out.println("---------------------------------");
     }
     static void printNote(double[] fit_value, int i){
+        double average = 0;
+        double max = 0;
+        double min = 0;
+        average = Arrays.stream(fit_value).average().getAsDouble();
+        max = fit_value[0];
+        min = fit_value[0];
         System.out.println("NoteFGeneration" + (i+1));
+        for(int j=1;j < fit_value.length;j++){
+            if(max < fit_value[j]){
+                max = fit_value[j];
+            }
+            else{
+                min = fit_value[j];
+            }
+        }
+        System.out.println("max="+max);
+        System.out.println("min="+min);
+        System.out.println("Ave="+average);
 
     }
     static void printGA(int[][] indiv, double[] fit_value,int[][] memo){
@@ -59,7 +77,7 @@ class Floyd_GA{
             for(int j=0;j<indiv[i].length;j++){
                 System.out.print(" "+indiv[i][j]);
             }
-            System.out.println(" "+fit_value[i]);
+            System.out.println("F"+fit_value[i]);
         }
         System.out.println("---------------------------------");
     }
@@ -84,6 +102,7 @@ class Floyd_GA{
             memo[j][1] = rand2;
             memo[j][2] = rand3;
         }
+        fitness(indiv,fit_value);
         printGA(indiv, fit_value,memo);
         printNote(fit_value,i);
     }
