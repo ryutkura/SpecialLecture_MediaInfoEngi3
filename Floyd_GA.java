@@ -1,3 +1,6 @@
+import java.security.SecureRandom;
+import java.util.Random;
+
 class Floyd_GA{
     public static void fitness(int[][] indiv,double[] fit_value){
         double ans = 0;
@@ -36,35 +39,67 @@ class Floyd_GA{
         }
         return indiv;
     }
-    static void printvec(int[][] indiv, double[] fit_value){
+    static void printinit(int[][] indiv, double[] fit_value){
         for(int i=0;i<indiv.length;i++){
             for(int j=0;j<indiv[i].length;j++){
                 System.out.print(" "+indiv[i][j]);
             }
             System.out.println(" "+fit_value[i]);
         }
+        System.out.println("---------------------------------");
     }
-    public static int[][] GA(int[][] indiv){
+    static void printNote(double[] fit_value, int i){
+        System.out.println("Note：Generation" + (i+1));
+
+    }
+    static void printGA(int[][] indiv, double[] fit_value,int[][] memo){
+        
         for(int i=0;i<indiv.length;i++){
+            System.out.print("("+memo[i][0]+","+memo[i][1]+") "+memo[i][2]);
             for(int j=0;j<indiv[i].length;j++){
-                indiv[i][j] = 1;
-                //ここの中身を書き換えたらGAプログラムの完成
+                System.out.print(" "+indiv[i][j]);
             }
+            System.out.println(" "+fit_value[i]);
         }
-        return indiv;
+        System.out.println("---------------------------------");
+    }
+    public static void GA(int[][] indiv,int[][] memo,int NOI, double[] fit_value,int i){
+        for(int j=0;j<indiv.length;j++){
+           Random rand = new SecureRandom();
+            int rand1 = rand.nextInt(NOI - 1);
+            int rand2 = rand.nextInt(NOI-1);
+            int rand3 = rand.nextInt(NOI-1);
+            if(rand1 == rand2){
+                rand2 = rand.nextInt(NOI-1);
+            }
+            //↓GAの内部処理
+            if(rand1<rand2){
+                indiv[rand1][rand3] = indiv[rand1][rand3] * indiv[rand2][rand3];
+            }
+            else{
+                indiv[rand2][rand3] = indiv[rand1][rand3] * indiv[rand2][rand3];
+            }
+            //↑GAの内部処理
+            memo[j][0] = rand1;
+            memo[j][1] = rand2;
+            memo[j][2] = rand3;
+        }
+        printGA(indiv, fit_value,memo);
+        printNote(fit_value,i);
     }
     
     public static void main(String args[]){
-        int indiv[][] = new int[10][11];//[個体数][桁数]でそれぞれここだけ変えても動くはず
-        double fit_value[] = new double[10];
+        int NOI = 10;//個体数
+        int Gene = 5;//世代数
+        int DIN = 11;//桁数
+        int indiv[][] = new int[NOI][DIN];//[個体数][桁数]でそれぞれここだけ変えても動くはず
+        double fit_value[] = new double[NOI];
+        int memo[][] = new int[NOI][3];
         init(indiv);
         fitness(indiv,fit_value);
-        printvec(indiv,fit_value);
-        for(int i=0;i<indiv.length;i++){
-            System.out.println("ただいま"+(i+1)+"回目");
-            GA(indiv);
-            fitness(indiv, fit_value);
-            printvec(indiv,fit_value);
+        printinit(indiv,fit_value);
+        for(int i=0;i<Gene;i++){
+            GA(indiv,memo,NOI,fit_value,i);
         }
     }
 }
