@@ -61,7 +61,7 @@ class Floyd_GA{
             if(max < fit_value[j]){
                 max = fit_value[j];
             }
-            else{
+            else if(min > fit_value[j]){
                 min = fit_value[j];
             }
         }
@@ -111,8 +111,8 @@ class Floyd_GA{
     }
     
     public static void main(String args[]){
-        int NOI = 10;//ŒÂ‘Ì”
-        int Gene = 5;//¢‘ã”
+        int NOI = 5;//ŒÂ‘Ì”
+        int Gene = 10;//¢‘ã”
         int DIN = 11;//Œ…”
         int indiv[][] = new int[NOI][DIN];//[ŒÂ‘Ì”][Œ…”]‚Å‚»‚ê‚¼‚ê‚±‚±‚¾‚¯•Ï‚¦‚Ä‚à“®‚­‚Í‚¸
         double fit_value[] = new double[NOI];
