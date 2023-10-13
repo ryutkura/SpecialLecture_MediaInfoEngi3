@@ -81,22 +81,51 @@ class Floyd_GA{
         }
         System.out.println("---------------------------------");
     }
-    public static void GA(int[][] indiv,int[][] memo,int NOI, double[] fit_value,int i){
+    public static void GA(int[][] indiv,int[][] memo,int NOI, double[] fit_value,int i,int DIN){
         for(int j=0;j<indiv.length;j++){
-           Random rand = new SecureRandom();
+            int temp1[] = new int[DIN];
+            int temp2[] = new int[DIN];
+            Random rand = new SecureRandom();
             int rand1 = rand.nextInt(NOI - 1);
             int rand2 = rand.nextInt(NOI-1);
-            int rand3 = rand.nextInt(NOI-1);
+            int rand3 = rand.nextInt(DIN-1);
+            double rand4 = Math.random();
             if(rand1 == rand2){
                 rand2 = rand.nextInt(NOI-1);
             }
             //↓GAの内部処理
-            if(rand1<rand2){
-                indiv[rand1][rand3] = indiv[rand1][rand3] * indiv[rand2][rand3];
+            for(int s=0;s<DIN;s++){
+                if(s<=rand3){
+                    temp1[s] = indiv[rand1][s];
+                }
+                else if(rand3<s){
+                    temp1[s] = indiv[rand2][s];
+                }
             }
-            else{
-                indiv[rand2][rand3] = indiv[rand1][rand3] * indiv[rand2][rand3];
+            for(int s=0;s<DIN;s++){
+                if(s<=rand3){
+                    temp2[s] = indiv[rand2][s];
+                }
+                else if(rand3<s){
+                    temp2[s] = indiv[rand1][s];
+                }
             }
+            for(int s=0;s<DIN;s++){
+                    indiv[rand1][s] = temp1[s];
+            }
+            for(int s=0;s<DIN;s++){
+                    indiv[rand2][s] = temp2[s];
+            }
+            //↑ここまで交叉のプログラム
+            if(rand4>0.95){
+                if(indiv[rand1][rand3] == 1){
+                    indiv[rand1][rand3] = 0;
+                }
+                else if(indiv[rand1][rand3] == 0){
+                    indiv[rand1][rand3] = 1;
+                }
+            }
+            //↑ここまでが突然変異のプログラム
             //↑GAの内部処理
             memo[j][0] = rand1;
             memo[j][1] = rand2;
@@ -111,8 +140,8 @@ class Floyd_GA{
     }
     
     public static void main(String args[]){
-        int NOI = 5;//個体数
-        int Gene = 10;//世代数
+        int NOI = 10;//個体数
+        int Gene = 1;//世代数
         int DIN = 11;//桁数
         int indiv[][] = new int[NOI][DIN];//[個体数][桁数]でそれぞれここだけ変えても動くはず
         double fit_value[] = new double[NOI];
@@ -121,7 +150,7 @@ class Floyd_GA{
         fitness(indiv,fit_value);
         printinit(indiv,fit_value);
         for(int i=0;i<Gene;i++){
-            GA(indiv,memo,NOI,fit_value,i);
+            GA(indiv,memo,NOI,fit_value,i,DIN);
         }
     }
 }
