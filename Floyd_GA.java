@@ -94,6 +94,9 @@ class Floyd_GA{
                 rand2 = rand.nextInt(NOI-1);
             }
             //↓GAの内部処理
+            //↓エリートの選別と保管をここで処理する
+            //↑エリートここまで
+            //↓ここから交叉のプログラム
             for(int s=0;s<DIN;s++){
                 if(s<=rand3){
                     temp1[s] = indiv[rand1][s];
@@ -117,6 +120,7 @@ class Floyd_GA{
                     indiv[rand2][s] = temp2[s];
             }
             //↑ここまで交叉のプログラム
+            //↓ここから突然変異のプログラム
             if(rand4>0.95){
                 if(indiv[rand1][rand3] == 1){
                     indiv[rand1][rand3] = 0;
@@ -135,13 +139,15 @@ class Floyd_GA{
             fit_value[k] = 0;
         }
         fitness(indiv,fit_value);
+        //エリート戦略のメソッドはここに書く↓
+        //エリート戦略のメソッドはここに書く↑
         printGA(indiv, fit_value,memo);
         printNote(fit_value,i);
     }
     
     public static void main(String args[]){
         int NOI = 10;//個体数
-        int Gene = 1;//世代数
+        int Gene = 10;//世代数
         int DIN = 11;//桁数
         int indiv[][] = new int[NOI][DIN];//[個体数][桁数]でそれぞれここだけ変えても動くはず
         double fit_value[] = new double[NOI];
