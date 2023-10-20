@@ -1,6 +1,12 @@
 import java.security.SecureRandom;
 import java.util.Random;
+import java.util.Set;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.io.PrintWriter;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
 class Floyd_GA{
     public static void fitness(int[][] indiv,double[] fit_value){
@@ -68,6 +74,17 @@ class Floyd_GA{
         System.out.println("max="+max);
         System.out.println("min="+min);
         System.out.println("Ave="+average);
+        try{
+                FileWriter fw = new FileWriter("C:\\Users\\maedalab20232\\Desktop\\メディア情報工学特論Ⅲプログラム\\result.csv", true); 
+                PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
+
+                pw.println(average+","+min+","+max);
+                pw.close();
+
+                
+            }catch(IOException e){
+                System.out.println(e);
+            }
 
     }
     static void printGA(int[][] indiv, double[] fit_value,int[][] memo){
@@ -83,18 +100,34 @@ class Floyd_GA{
     }
     public static void GA(int[][] indiv,int[][] memo,int NOI, double[] fit_value,int i,int DIN){
         for(int j=0;j<indiv.length;j++){
+            double min = 9999;
+            int eliteno = 0;
             int temp1[] = new int[DIN];
             int temp2[] = new int[DIN];
             Random rand = new SecureRandom();
-            int rand1 = rand.nextInt(NOI - 1);
-            int rand2 = rand.nextInt(NOI-1);
+            int rand1 = 0;// = rand.nextInt(NOI - 1);
+            int rand2 = 0;//rand.nextInt(NOI-1);
             int rand3 = rand.nextInt(DIN-1);
             double rand4 = Math.random();
-            if(rand1 == rand2){
+            do {
                 rand2 = rand.nextInt(NOI-1);
-            }
+            } while (rand1 == rand2); //除外リストのいずれかの数値と一致なら繰り返す
             //↓GAの内部処理
             //↓エリートの選別と保管をここで処理する
+            for(int k=1;k < fit_value.length;k++){
+                if(min > fit_value[k]){
+                    min = fit_value[k];
+                    eliteno = k;
+                }
+            }
+            Set<Integer> exSet = new HashSet<Integer>();
+            exSet.add(eliteno);
+            do {
+                rand1 = rand.nextInt(NOI-1);
+            } while (exSet.contains(rand1)); //除外リストのいずれかの数値と一致なら繰り返す
+            do {
+                rand2 = rand.nextInt(NOI-1);
+            } while (exSet.contains(rand2)); //除外リストのいずれかの数値と一致なら繰り返す
             //↑エリートここまで
             //↓ここから交叉のプログラム
             for(int s=0;s<DIN;s++){
@@ -147,8 +180,8 @@ class Floyd_GA{
     
     public static void main(String args[]){
         int NOI = 10;//個体数
-        int Gene = 10;//世代数
-        int DIN = 11;//桁数
+        int Gene = 10000;//世代数
+        int DIN = 30;//桁数
         int indiv[][] = new int[NOI][DIN];//[個体数][桁数]でそれぞれここだけ変えても動くはず
         double fit_value[] = new double[NOI];
         int memo[][] = new int[NOI][3];
