@@ -75,7 +75,7 @@ class Floyd_GA{
         System.out.println("min="+min);
         System.out.println("Ave="+average);
         try{
-                FileWriter fw = new FileWriter("C:\\Users\\maedalab20232\\Desktop\\メディア情報工学特論Ⅲプログラム\\result.csv", true); 
+                FileWriter fw = new FileWriter("G:\\SpecialLecture_MediaInfoEngi3\\result.csv", true); 
                 PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
 
                 pw.println(average+","+min+","+max);
@@ -114,7 +114,7 @@ class Floyd_GA{
             } while (rand1 == rand2); //除外リストのいずれかの数値と一致なら繰り返す
             //↓GAの内部処理
             //↓エリートの選別と保管をここで処理する
-            for(int k=1;k < fit_value.length;k++){
+            for(int k=0;k < fit_value.length;k++){
                 if(min > fit_value[k]){
                     min = fit_value[k];
                     eliteno = k;
@@ -180,8 +180,8 @@ class Floyd_GA{
     
     public static void main(String args[]){
         int NOI = 10;//個体数
-        int Gene = 10000;//世代数
-        int DIN = 30;//桁数
+        int Gene = 10;//世代数
+        int DIN = 11;//桁数
         int indiv[][] = new int[NOI][DIN];//[個体数][桁数]でそれぞれここだけ変えても動くはず
         double fit_value[] = new double[NOI];
         int memo[][] = new int[NOI][3];
