@@ -69,7 +69,7 @@ class Floyd_GA{
         System.out.println("min="+min);
         System.out.println("Ave="+average);
         try{
-                FileWriter fw = new FileWriter("C:\\Users\\maedalab20232\\Desktop\\メディア情報工学特論Ⅲプログラム\\result.csv", true); 
+                FileWriter fw = new FileWriter("result.csv", true); 
                 PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
 
                 pw.println(average+","+min+","+max);
