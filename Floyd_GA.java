@@ -1,12 +1,6 @@
 import java.security.SecureRandom;
-import java.util.Random;
-import java.util.Set;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.io.PrintWriter;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.util.*;
 
 class Floyd_GA{
     public static void fitness(int[][] indiv,double[] fit_value){
