@@ -97,8 +97,7 @@ class Floyd_GA{
         int kuso = 0;
         double min = 9999;
         double min1 = 9999;
-        // double max = 0;
-        double max1 = 0;
+        double max = 0;
         double minever = 9999;
         int elitever[] = new int[DIN];
         //↓エリートの選別と保管をここで処理する(初回限定番)
@@ -125,6 +124,7 @@ class Floyd_GA{
                 rand2 = rand.nextInt(NOI-1);
             } while (rand1 == rand2); //除外リストのいずれかの数値と一致なら繰り返す
             //↓この選出方法を乱数から何かの作戦に切り替える
+
             //↑選出方法の処理ここまで
             //↓GAの内部処理
             //↓ここから交叉のプログラム
@@ -173,8 +173,8 @@ class Floyd_GA{
                 min1 = fit_value[k];
                 eliteno = k;
             }
-            else if(fit_value[k] > max1){
-                max1 = fit_value[k];
+            else if(fit_value[k] > max){
+                max = fit_value[k];
                 kuso = k;
             }
         }
@@ -186,9 +186,6 @@ class Floyd_GA{
             }
         }
         else if((min1 <= min) && (min1 > minever)){
-            // for(int n=0;n < DIN;n++){
-            //     elitever[n] = indiv[eliteno][n];
-            // }
         }
         else if((min1 > min) && (min1 > minever)){
             //上書き処理
@@ -203,13 +200,12 @@ class Floyd_GA{
         }
         for(int l=0;l < DIN;l++){
             indiv[eliteno][l] = elite[l];
-            // System.out.println(elite[l]);
         }
         for(int k=0;k<fit_value.length;k++){
             fit_value[k] = 0;
         }
         fitness(indiv,fit_value);
-        printGA(indiv, fit_value,memo);
+        // printGA(indiv, fit_value,memo);
         printNote(fit_value,i);
     }
     
