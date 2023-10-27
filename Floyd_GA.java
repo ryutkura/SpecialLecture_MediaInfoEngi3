@@ -1,12 +1,6 @@
 import java.security.SecureRandom;
-import java.util.Random;
-import java.util.Set;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.io.PrintWriter;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.util.*;
 
 class Floyd_GA{
     public static void fitness(int[][] indiv,double[] fit_value){
@@ -71,11 +65,11 @@ class Floyd_GA{
                 min = fit_value[j];
             }
         }
-        System.out.println("max="+max);
+        //System.out.println("max="+max);
         System.out.println("min="+min);
-        System.out.println("Ave="+average);
+        //System.out.println("Ave="+average);
         try{
-                FileWriter fw = new FileWriter("G:\\SpecialLecture_MediaInfoEngi3\\result.csv", true); 
+                FileWriter fw = new FileWriter("result.csv", true); 
                 PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
 
                 pw.println(average+","+min+","+max);
@@ -98,37 +92,54 @@ class Floyd_GA{
         }
         System.out.println("---------------------------------");
     }
-    public static void GA(int[][] indiv,int[][] memo,int NOI, double[] fit_value,int i,int DIN){
+    public static void GA(int[][] indiv,int[][] memo,int NOI, double[] fit_value,int i,int DIN,int[] elite){
+        int eliteno = 0;
+        int kuso = 0;
+        double min = 9999;
+        double min1 = 9999;
+        double max = 0;
+        double minever = 9999;
+        int elitever[] = new int[DIN];
+        double sum = Arrays.stream(fit_value).sum();
+        double roulette[] = new double[DIN];
+        //↓エリートの選別と保管をここで処理する(初回限定番)
+        for(int k=0;k < fit_value.length;k++){
+            if(min > fit_value[k]){
+                min = fit_value[k];
+                minever = fit_value[k];
+                eliteno = k;
+            }
+        }
+        for(int l=0;l < DIN;l++){
+            elite[l] = indiv[eliteno][l];
+            elitever[l] = indiv[eliteno][l];
+        }
         for(int j=0;j<indiv.length;j++){
-            double min = 9999;
-            int eliteno = 0;
             int temp1[] = new int[DIN];
             int temp2[] = new int[DIN];
             Random rand = new SecureRandom();
-            int rand1 = 0;// = rand.nextInt(NOI - 1);
+            int rand1 = rand.nextInt(NOI - 1);
             int rand2 = 0;//rand.nextInt(NOI-1);
             int rand3 = rand.nextInt(DIN-1);
             double rand4 = Math.random();
-            do {
-                rand2 = rand.nextInt(NOI-1);
-            } while (rand1 == rand2); //除外リストのいずれかの数値と一致なら繰り返す
-            //↓GAの内部処理
-            //↓エリートの選別と保管をここで処理する
-            for(int k=0;k < fit_value.length;k++){
-                if(min > fit_value[k]){
-                    min = fit_value[k];
-                    eliteno = k;
+            double rand5 = Math.random();
+            //除外リストのいずれかの数値と一致なら繰り返す
+            //↓この選出方法を乱数から何かの作戦に切り替える
+            for(int aa=0;aa < fit_value.length;aa++){
+                roulette[aa] = 1-(fit_value[aa]/sum);
+            }
+            for(int aa=0;aa < fit_value.length;aa++){
+                if(rand5 <= roulette[aa]){
+                    rand2 = aa;
+                    break;
                 }
             }
-            Set<Integer> exSet = new HashSet<Integer>();
-            exSet.add(eliteno);
             do {
                 rand1 = rand.nextInt(NOI-1);
-            } while (exSet.contains(rand1)); //除外リストのいずれかの数値と一致なら繰り返す
-            do {
-                rand2 = rand.nextInt(NOI-1);
-            } while (exSet.contains(rand2)); //除外リストのいずれかの数値と一致なら繰り返す
-            //↑エリートここまで
+            } while (rand1 == rand2); 
+
+            //↑選出方法の処理ここまで
+            //↓GAの内部処理
             //↓ここから交叉のプログラム
             for(int s=0;s<DIN;s++){
                 if(s<=rand3){
@@ -167,29 +178,63 @@ class Floyd_GA{
             memo[j][0] = rand1;
             memo[j][1] = rand2;
             memo[j][2] = rand3;
+
+        }
+        //↓エリートの選別と保管をここで処理する
+        for(int k=0;k < fit_value.length;k++){
+            if(min1 > fit_value[k]){
+                min1 = fit_value[k];
+                eliteno = k;
+            }
+            else if(fit_value[k] > max){
+                max = fit_value[k];
+                kuso = k;
+            }
+        }
+        //↓保管の後の処理
+        if((min1 > min) && (min1 <= minever)){
+            //上書き処理
+            for(int m=0;m < DIN; m++){
+                indiv[kuso][m] = elitever[m];
+            }
+        }
+        else if((min1 <= min) && (min1 > minever)){
+        }
+        else if((min1 > min) && (min1 > minever)){
+            //上書き処理
+            for(int m=0;m < DIN; m++){
+                indiv[kuso][m] = elitever[m];
+            }
+        }
+        else if((min1 <= min) && (min1 <= minever)){
+            for(int n=0;n < DIN;n++){
+                elitever[n] = indiv[eliteno][n];
+            }
+        }
+        for(int l=0;l < DIN;l++){
+            indiv[eliteno][l] = elite[l];
         }
         for(int k=0;k<fit_value.length;k++){
             fit_value[k] = 0;
         }
         fitness(indiv,fit_value);
-        //エリート戦略のメソッドはここに書く↓
-        //エリート戦略のメソッドはここに書く↑
-        printGA(indiv, fit_value,memo);
+        // printGA(indiv, fit_value,memo);
         printNote(fit_value,i);
     }
     
     public static void main(String args[]){
         int NOI = 10;//個体数
-        int Gene = 10;//世代数
-        int DIN = 11;//桁数
+        int Gene = 2000;//世代数
+        int DIN = 20;//桁数
         int indiv[][] = new int[NOI][DIN];//[個体数][桁数]でそれぞれここだけ変えても動くはず
         double fit_value[] = new double[NOI];
+        int elite[] = new int[DIN];
         int memo[][] = new int[NOI][3];
         init(indiv);
         fitness(indiv,fit_value);
         printinit(indiv,fit_value);
         for(int i=0;i<Gene;i++){
-            GA(indiv,memo,NOI,fit_value,i,DIN);
+            GA(indiv,memo,NOI,fit_value,i,DIN,elite);
         }
     }
 }
