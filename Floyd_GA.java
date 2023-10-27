@@ -165,7 +165,7 @@ class Floyd_GA{
             }
             //↑ここまで交叉のプログラム
             //↓ここから突然変異のプログラム
-            if(rand4>0.95){
+            if(rand4>0.92){
                 if(indiv[rand1][rand3] == 1){
                     indiv[rand1][rand3] = 0;
                 }
