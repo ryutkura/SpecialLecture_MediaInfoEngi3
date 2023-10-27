@@ -65,9 +65,9 @@ class Floyd_GA{
                 min = fit_value[j];
             }
         }
-        System.out.println("max="+max);
+        //System.out.println("max="+max);
         System.out.println("min="+min);
-        System.out.println("Ave="+average);
+        //System.out.println("Ave="+average);
         try{
                 FileWriter fw = new FileWriter("result.csv", true); 
                 PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
@@ -96,7 +96,9 @@ class Floyd_GA{
         int eliteno = 0;
         int kuso = 0;
         double min = 9999;
-        double max = 0;
+        double min1 = 9999;
+        // double max = 0;
+        double max1 = 0;
         double minever = 9999;
         int elitever[] = new int[DIN];
         //↓エリートの選別と保管をここで処理する(初回限定番)
@@ -164,32 +166,44 @@ class Floyd_GA{
             memo[j][1] = rand2;
             memo[j][2] = rand3;
 
-            //↓エリートの選別と保管をここで処理する
-            for(int k=0;k < fit_value.length;k++){
-                if(min > fit_value[k]){
-                    min = fit_value[k];
-                    eliteno = k;
-                }
-                else if(fit_value[k] > max){
-                    max = fit_value[k];
-                    kuso = k;
-                }
+        }
+        //↓エリートの選別と保管をここで処理する
+        for(int k=0;k < fit_value.length;k++){
+            if(min1 > fit_value[k]){
+                min1 = fit_value[k];
+                eliteno = k;
             }
-            //↓工事部やっぱ条件分岐は4つなのでは？後でやりますか
-            if(min > minever){
-                //上書き処理
-                for(int m=0;m < DIN; m++){
-                    indiv[kuso][m] = elitever[m];
-                }
+            else if(fit_value[k] > max1){
+                max1 = fit_value[k];
+                kuso = k;
             }
-            // else if(min <= minever){
-            //     for(int n=0;n < DIN;n++){
-            //         elitever[n] = indiv[eliteno][n];
-            //     }
+        }
+        //↓保管の後の処理
+        if((min1 > min) && (min1 <= minever)){
+            //上書き処理
+            for(int m=0;m < DIN; m++){
+                indiv[kuso][m] = elitever[m];
+            }
+        }
+        else if((min1 <= min) && (min1 > minever)){
+            // for(int n=0;n < DIN;n++){
+            //     elitever[n] = indiv[eliteno][n];
             // }
-            // for(int l=0;l < DIN;l++){
-            //     elite[l] = indiv[eliteno][l];
-            // }
+        }
+        else if((min1 > min) && (min1 > minever)){
+            //上書き処理
+            for(int m=0;m < DIN; m++){
+                indiv[kuso][m] = elitever[m];
+            }
+        }
+        else if((min1 <= min) && (min1 <= minever)){
+            for(int n=0;n < DIN;n++){
+                elitever[n] = indiv[eliteno][n];
+            }
+        }
+        for(int l=0;l < DIN;l++){
+            indiv[eliteno][l] = elite[l];
+            // System.out.println(elite[l]);
         }
         for(int k=0;k<fit_value.length;k++){
             fit_value[k] = 0;
@@ -201,7 +215,7 @@ class Floyd_GA{
     
     public static void main(String args[]){
         int NOI = 10;//個体数
-        int Gene = 20;//世代数
+        int Gene = 2000;//世代数
         int DIN = 20;//桁数
         int indiv[][] = new int[NOI][DIN];//[個体数][桁数]でそれぞれここだけ変えても動くはず
         double fit_value[] = new double[NOI];
