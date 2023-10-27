@@ -100,6 +100,8 @@ class Floyd_GA{
         double max = 0;
         double minever = 9999;
         int elitever[] = new int[DIN];
+        double sum = Arrays.stream(fit_value).sum();
+        double roulette[] = new double[DIN];
         //↓エリートの選別と保管をここで処理する(初回限定番)
         for(int k=0;k < fit_value.length;k++){
             if(min > fit_value[k]){
@@ -120,10 +122,21 @@ class Floyd_GA{
             int rand2 = 0;//rand.nextInt(NOI-1);
             int rand3 = rand.nextInt(DIN-1);
             double rand4 = Math.random();
-            do {
-                rand2 = rand.nextInt(NOI-1);
-            } while (rand1 == rand2); //除外リストのいずれかの数値と一致なら繰り返す
+            double rand5 = Math.random();
+            //除外リストのいずれかの数値と一致なら繰り返す
             //↓この選出方法を乱数から何かの作戦に切り替える
+            for(int aa=0;aa < fit_value.length;aa++){
+                roulette[aa] = 1-(fit_value[aa]/sum);
+            }
+            for(int aa=0;aa < fit_value.length;aa++){
+                if(rand5 <= roulette[aa]){
+                    rand2 = aa;
+                    break;
+                }
+            }
+            do {
+                rand1 = rand.nextInt(NOI-1);
+            } while (rand1 == rand2); 
 
             //↑選出方法の処理ここまで
             //↓GAの内部処理
