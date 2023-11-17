@@ -63,5 +63,6 @@ class Individual {
             totalDistance += tour.get(i).distanceTo(tour.get(i + 1));
         }
         totalDistance += tour.get(tour.size() - 1).distanceTo(tour.get(0)); // ÅŒã‚Ì“ss‚©‚çn“_‚Ö‚Ì‹——£
+        fitness = totalDistance;
     }
 }
