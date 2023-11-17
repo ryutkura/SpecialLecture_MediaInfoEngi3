@@ -173,7 +173,7 @@ class Individual {
     }
 }
 
-// 個体群クラス
+// 個体群クラス(ノード情報ついでに交配もしてる)
 class Population {
     private ArrayList<Individual> individuals;
 
