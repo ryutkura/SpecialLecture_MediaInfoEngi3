@@ -33,9 +33,11 @@ public class TSP_GA {
         // ... (既存のコード)
 
         // 初期個体群を生成し、新しい都市データを使用して進化を開始
-        // Population population = new Population(POPULATION_SIZE, cities);
+        Population population = new Population(POPULATION_SIZE, cities);
 
-   
+        // 最終的な最適な経路を出力
+        Individual bestIndividual = population.getBestIndividual();
+        System.out.println("最適な経路: " + bestIndividual);
 
     }
 }
