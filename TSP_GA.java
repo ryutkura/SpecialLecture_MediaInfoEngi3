@@ -53,10 +53,23 @@ public class TSP_GA {
         Individual bestIndividual = population.getBestIndividual();
         System.out.println("最適な経路: " + bestIndividual);
 
+        // 生成した初期個体群の適応度を表示
+        System.out.println("初期個体群の適応度:");
+        for (int i = 0; i < population.getSize(); i++) {
+            Individual individual = population.getIndividual(i);
+            System.out.println("個体 " + (i + 1) + " の適応度: " + individual.getFitness());
+        }
+
+        // // 生成した初期個体群の適応度を表示
+        // System.out.println("初期個体群の巡回路:");
+        // for (int i = 0; i < population.getSize(); i++) {
+        //     Individual individual = population.getIndividual(i);
+        //     System.out.println("個体 " + (i + 1) + " の巡回路: " + individual.getTour());
+        // }
 
         System.out.println("初期個体群:");
-        for (int i = 0; i < population.getSize(); i++) {
-            System.out.println("個体 " + (i + 1) + ": " + population.getIndividual(i));
+        for (int j = 0; j < population.getSize(); j++) {
+            System.out.println("個体 " + (j + 1) + ": " + population.getIndividual(j));
         }
     }
 }
