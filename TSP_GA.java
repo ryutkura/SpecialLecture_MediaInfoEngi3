@@ -7,6 +7,17 @@ import java.util.Random;
 
 public class TSP_GA {
 
+    // 都市の数
+    private static final int NUM_CITIES = 29;
+    // 個体数
+    private static final int POPULATION_SIZE = 20;
+    // 交叉率
+    private static final double CROSSOVER_RATE = 0.8;
+    // 突然変異率
+    private static final double MUTATION_RATE = 0.02;
+    // 世代数
+    private static final int NUM_GENERATIONS = 1000;
+
     private static ArrayList<City> readCities(String filePath) {
         ArrayList<City> cities = new ArrayList<>();
 
@@ -31,6 +42,9 @@ public class TSP_GA {
         ArrayList<City> cities = readCities("WesternSaharaPlot.txt");
 
         // ... (既存のコード)
+        // for (City city : cities) {
+        //     System.out.println(city);
+        // }
 
         // 初期個体群を生成し、新しい都市データを使用して進化を開始
         Population population = new Population(POPULATION_SIZE, cities);
@@ -39,6 +53,11 @@ public class TSP_GA {
         Individual bestIndividual = population.getBestIndividual();
         System.out.println("最適な経路: " + bestIndividual);
 
+
+        System.out.println("初期個体群:");
+        for (int i = 0; i < population.getSize(); i++) {
+            System.out.println("個体 " + (i + 1) + ": " + population.getIndividual(i));
+        }
     }
 }
 
@@ -51,13 +70,13 @@ class City{
         this.y = y;
     }
 
-    public double getX() {
-        return x;
-    }
+    // public double getX() {
+    //     return x;
+    // }
 
-    public double getY() {
-        return y;
-    }
+    // public double getY() {
+    //     return y;
+    // }
 
     // 2つの都市間の距離を計算
     public double distanceTo(City otherCity) {
@@ -98,12 +117,87 @@ class Individual {
         calculateFitness();
     }
 
-    private void calculateFitness() {
+    public void calculateFitness() {
         double totalDistance = 0;
         for (int i = 0; i < tour.size() - 1; i++) {
             totalDistance += tour.get(i).distanceTo(tour.get(i + 1));
         }
         totalDistance += tour.get(tour.size() - 1).distanceTo(tour.get(0)); // 最後の都市から始点への距離
         fitness = totalDistance;
+    }
+}
+
+class Population {
+    private ArrayList<Individual> individuals;
+
+    public Population() {
+        this.individuals = new ArrayList<>();
+    }
+
+    public Population(int populationSize, ArrayList<City> cities) {
+        this.individuals = new ArrayList<>();
+
+        for (int i = 0; i < populationSize; i++) {
+            ArrayList<City> shuffledCities = new ArrayList<>(cities);
+            Collections.shuffle(shuffledCities);
+            Individual individual = new Individual(shuffledCities);
+            individuals.add(individual);
+        }
+    }
+
+    public int getSize() {
+        return individuals.size();
+    }
+
+    public Individual getIndividual(int index) {
+        return individuals.get(index);
+    }
+
+    // 適応度に基づいて個体群を評価
+    public void evaluate() {
+        for (Individual individual : individuals) {
+            individual.calculateFitness();
+        }
+        individuals.sort((i1, i2) -> Double.compare(i2.getFitness(), i1.getFitness()));
+    }
+
+    // エリート個体を取得
+    public Individual getElite() {
+        return individuals.get(0);
+    }
+
+    // ランダムな個体を取得
+    public Individual getRandomIndividual() {
+        Random random = new Random();
+        int index = random.nextInt(getSize());
+        return getIndividual(index);
+    }
+
+    // 個体を追加
+    public void addIndividual(Individual individual) {
+        individuals.add(individual);
+    }
+
+    // 最良の個体を取得
+    public Individual getBestIndividual() {
+        return individuals.get(0);
+    }
+
+    // 親を選択
+    public Individual selectParent() {
+        // ルーレット選択を使用
+        double totalFitness = individuals.stream().mapToDouble(Individual::getFitness).sum();
+        double target = Math.random() * totalFitness;
+        double currentSum = 0;
+
+        for (Individual individual : individuals) {
+            currentSum += individual.getFitness();
+            if (currentSum >= target) {
+                return individual;
+            }
+        }
+
+        // 通常はここに到達しないはず
+        return individuals.get(individuals.size() - 1);
     }
 }
