@@ -23,17 +23,58 @@ public class TSP_GA {
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
+            int index = 0;
             while ((line = br.readLine()) != null) {
                 String[] coordinates = line.split("\\s+");
                 double x = Double.parseDouble(coordinates[0]);
                 double y = Double.parseDouble(coordinates[1]);
-                cities.add(new City(x, y));
+                cities.add(new City(index++,x, y));
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         return cities;
+    }
+
+    private static Individual crossover(Individual parent1, Individual parent2) {
+        // PMX‚ğg—p‚µ‚½Œğ³
+        Random random = new Random();
+        int startPos = random.nextInt(NUM_CITIES);
+        int endPos = random.nextInt(NUM_CITIES - startPos) + startPos;
+
+        ArrayList<City> childCities = new ArrayList<>(Collections.nCopies(NUM_CITIES, null));
+        for (int i = startPos; i <= endPos; i++) {
+            childCities.set(i, parent1.getCity(i));
+        }
+
+        for (int i = 0; i < NUM_CITIES; i++) {
+            if (i < startPos || i > endPos) {
+                City currentCity = parent2.getCity(i);
+                int currentIndex = i;
+
+                while (childCities.contains(currentCity)) {
+                    currentIndex = parent1.indexOfCity(currentCity);
+                    currentCity = parent2.getCity(currentIndex);
+                }
+
+                childCities.set(currentIndex, currentCity);
+            }
+        }
+
+        return new Individual(childCities);
+    }
+
+    private static Individual mutate(Individual individual) {
+        // 2‚Â‚Ì“ss‚ğƒ‰ƒ“ƒ_ƒ€‚É‘I‘ğ‚µ‚ÄˆÊ’u‚ğ“ü‚ê‘Ö‚¦‚é
+        Random random = new Random();
+        int index1 = random.nextInt(NUM_CITIES);
+        int index2 = random.nextInt(NUM_CITIES);
+
+        ArrayList<City> mutatedCities = new ArrayList<>(individual.getCities());
+        Collections.swap(mutatedCities, index1, index2);
+
+        return new Individual(mutatedCities);
     }
 
     public static void main(String[] args){
@@ -75,21 +116,15 @@ public class TSP_GA {
 }
 
 class City{
+    private int index;
     private double x;
     private double y;
 
-    public City(double x, double y) {
+    public City(int index, double x, double y) {
+        this.index = index;
         this.x = x;
         this.y = y;
     }
-
-    // public double getX() {
-    //     return x;
-    // }
-
-    // public double getY() {
-    //     return y;
-    // }
 
     // 2‚Â‚Ì“ssŠÔ‚Ì‹——£‚ğŒvZ
     public double distanceTo(City otherCity) {
@@ -98,12 +133,12 @@ class City{
         return Math.sqrt(dx * dx + dy * dy);
     }
 
-    public static City createCity(String coordinates) {
-        String[] coords = coordinates.split("\\s+");
-        double x = Double.parseDouble(coords[0]);
-        double y = Double.parseDouble(coords[1]);
-        return new City(x, y);
-    }
+    // public static City createCity(String coordinates) {
+    //     String[] coords = coordinates.split("\\s+");
+    //     double x = Double.parseDouble(coords[0]);
+    //     double y = Double.parseDouble(coords[1]);
+    //     return new City(x, y);
+    // }
 }
 
 class Individual {
@@ -117,12 +152,20 @@ class Individual {
         calculateFitness();
     }
 
+    public ArrayList<City> getCities() {
+        return tour;
+    }
+
     public ArrayList<City> getTour() {
         return tour;
     }
 
     public double getFitness() {
         return fitness;
+    }
+
+    public City getCity(int index) {
+        return tour.get(index);
     }
 
     public void generateIndividual() {
