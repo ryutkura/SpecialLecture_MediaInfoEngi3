@@ -51,12 +51,14 @@ public class TSP_GA {
         for (int i = 0; i < NUM_CITIES; i++) {
             if (i < startPos || i > endPos) {
                 City currentCity = parent2.getCity(i);
-                int currentIndex = i;
+                int currentIndex = parent1.getCities().indexOf(currentCity);
+
 
                 while (childCities.contains(currentCity)) {
-                    currentIndex = parent1.indexOfCity(currentCity);
+                    currentIndex = parent1.getCities().indexOf(currentCity);
                     currentCity = parent2.getCity(currentIndex);
                 }
+                
 
                 childCities.set(currentIndex, currentCity);
             }
@@ -90,16 +92,50 @@ public class TSP_GA {
         // 初期個体群を生成し、新しい都市データを使用して進化を開始
         Population population = new Population(POPULATION_SIZE, cities);
 
+        for (int generation = 0; generation < NUM_GENERATIONS; generation++) {
+            // 適応度に基づいて個体群を評価
+            population.evaluate();
+        
+            // エリート個体を選択
+            Individual elite = population.getElite();
+        
+            // 新しい個体群を生成
+            Population newPopulation = new Population();
+        
+            // エリートを新しい個体群に追加
+            newPopulation.addIndividual(elite);
+        
+            // 交叉と突然変異を適用して新しい個体群を生成
+            while (newPopulation.getSize() < POPULATION_SIZE) {
+                // 交叉を適用
+                if (Math.random() < CROSSOVER_RATE) {
+                    Individual parent1 = population.selectParent();
+                    Individual parent2 = population.selectParent();
+                    Individual child = crossover(parent1, parent2);
+                    newPopulation.addIndividual(child);
+                } else {
+                    // 交叉を適用しない場合はランダムに選択して突然変異を適用
+                    Individual randomIndividual = population.getRandomIndividual();
+                    Individual mutatedChild = mutate(randomIndividual);
+                    newPopulation.addIndividual(mutatedChild);
+                }
+            }
+        
+            // 新しい個体群を更新
+            population = newPopulation;
+        }
+        
+
         // 最終的な最適な経路を出力
         Individual bestIndividual = population.getBestIndividual();
         System.out.println("最適な経路: " + bestIndividual);
 
-        // 生成した初期個体群の適応度を表示
-        System.out.println("初期個体群の適応度:");
-        for (int i = 0; i < population.getSize(); i++) {
-            Individual individual = population.getIndividual(i);
-            System.out.println("個体 " + (i + 1) + " の適応度: " + individual.getFitness());
-        }
+        // // 生成した初期個体群の適応度を表示
+        // System.out.println("初期個体群の適応度:");
+        // for (int i = 0; i < population.getSize(); i++) {
+        //     Individual individual = population.getIndividual(i);
+        //     System.out.println("個体 " + (i + 1) + " の適応度: " + individual.getFitness());
+        // }
 
         // // 生成した初期個体群の適応度を表示
         // System.out.println("初期個体群の巡回路:");
@@ -108,10 +144,10 @@ public class TSP_GA {
         //     System.out.println("個体 " + (i + 1) + " の巡回路: " + individual.getTour());
         // }
 
-        System.out.println("初期個体群:");
-        for (int j = 0; j < population.getSize(); j++) {
-            System.out.println("個体 " + (j + 1) + ": " + population.getIndividual(j));
-        }
+        // System.out.println("初期個体群:");
+        // for (int j = 0; j < population.getSize(); j++) {
+        //     System.out.println("個体 " + (j + 1) + ": " + population.getIndividual(j));
+        // }
     }
 }
 
@@ -132,6 +168,17 @@ class City{
         double dy = this.y - otherCity.y;
         return Math.sqrt(dx * dx + dy * dy);
     }
+
+    // @Override
+    // public String toString() {
+    //     return "City{" +
+    //             "index=" + index 
+    //             // +
+    //             // ", x=" + x +
+    //             // ", y=" + y +
+    //             // '}'
+    //             ;
+    // }
 
     // public static City createCity(String coordinates) {
     //     String[] coords = coordinates.split("\\s+");
@@ -181,6 +228,17 @@ class Individual {
         totalDistance += tour.get(tour.size() - 1).distanceTo(tour.get(0)); // 最後の都市から始点への距離
         fitness = totalDistance;
     }
+
+    // @Override
+    // public String toString() {
+    //     StringBuilder sb = new StringBuilder("Individual{tour=[");
+    //     for (City city : tour) {
+    //         sb.append(city).append(", ");
+    //     }
+    //     sb.delete(sb.length() - 2, sb.length()); // 末尾の不要なコンマとスペースを削除
+    //     sb.append("], fitness=").append(fitness).append('}');
+    //     return sb.toString();
+    // }
 }
 
 class Population {
