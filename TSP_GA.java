@@ -38,35 +38,34 @@ public class TSP_GA {
     }
 
     private static Individual crossover(Individual parent1, Individual parent2) {
-        // PMXを使用した交叉
+        // 1点交叉
         Random random = new Random();
-        int startPos = random.nextInt(NUM_CITIES);
-        int endPos = random.nextInt(NUM_CITIES - startPos) + startPos;
-
+        int crossoverPoint = random.nextInt(NUM_CITIES);
+    
         ArrayList<City> childCities = new ArrayList<>(Collections.nCopies(NUM_CITIES, null));
-        for (int i = startPos; i <= endPos; i++) {
+    
+        // 親1のツアーの一部を子供にコピー
+        for (int i = 0; i < crossoverPoint; i++) {
             childCities.set(i, parent1.getCity(i));
         }
-
+    
+        // 親2のツアーからまだ含まれていない都市を子供にコピー
         for (int i = 0; i < NUM_CITIES; i++) {
-            if (i < startPos || i > endPos) {
-                City currentCity = parent2.getCity(i);
-                int currentIndex = parent1.getCities().indexOf(currentCity);
-
-
-                while (childCities.contains(currentCity)) {
-                    currentIndex = parent1.getCities().indexOf(currentCity);
-                    currentCity = parent2.getCity(currentIndex);
+            City currentCity = parent2.getCity(i);
+    
+            if (!childCities.contains(currentCity)) {
+                for (int j = 0; j < NUM_CITIES; j++) {
+                    if (childCities.get(j) == null) {
+                        childCities.set(j, currentCity);
+                        break;
+                    }
                 }
-                
-
-                childCities.set(currentIndex, currentCity);
             }
         }
-
+    
         return new Individual(childCities);
     }
-
+    
     private static Individual mutate(Individual individual) {
         // 2つの都市をランダムに選択して位置を入れ替える
         Random random = new Random();
@@ -95,16 +94,19 @@ public class TSP_GA {
         for (int generation = 0; generation < NUM_GENERATIONS; generation++) {
             // 適応度に基づいて個体群を評価
             population.evaluate();
-        
+    
             // エリート個体を選択
             Individual elite = population.getElite();
-        
+    
+            // 表示
+            System.out.println("世代 " + generation + ": 最適な経路 - " + elite.getTour() + ", 適応度 - " + elite.getFitness());
+    
             // 新しい個体群を生成
             Population newPopulation = new Population();
-        
+    
             // エリートを新しい個体群に追加
             newPopulation.addIndividual(elite);
-        
+    
             // 交叉と突然変異を適用して新しい個体群を生成
             while (newPopulation.getSize() < POPULATION_SIZE) {
                 // 交叉を適用
@@ -120,34 +122,14 @@ public class TSP_GA {
                     newPopulation.addIndividual(mutatedChild);
                 }
             }
-        
+    
             // 新しい個体群を更新
             population = newPopulation;
         }
-        
-
+    
         // 最終的な最適な経路を出力
         Individual bestIndividual = population.getBestIndividual();
-        System.out.println("最適な経路: " + bestIndividual);
-
-        // // 生成した初期個体群の適応度を表示
-        // System.out.println("初期個体群の適応度:");
-        // for (int i = 0; i < population.getSize(); i++) {
-        //     Individual individual = population.getIndividual(i);
-        //     System.out.println("個体 " + (i + 1) + " の適応度: " + individual.getFitness());
-        // }
-
-        // // 生成した初期個体群の適応度を表示
-        // System.out.println("初期個体群の巡回路:");
-        // for (int i = 0; i < population.getSize(); i++) {
-        //     Individual individual = population.getIndividual(i);
-        //     System.out.println("個体 " + (i + 1) + " の巡回路: " + individual.getTour());
-        // }
-
-        // System.out.println("初期個体群:");
-        // for (int j = 0; j < population.getSize(); j++) {
-        //     System.out.println("個体 " + (j + 1) + ": " + population.getIndividual(j));
-        // }
+        System.out.println("最適な経路: " + bestIndividual.getTour() + ", 適応度: " + bestIndividual.getFitness());
     }
 }
 
@@ -162,8 +144,23 @@ class City{
         this.y = y;
     }
 
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
     // 2つの都市間の距離を計算
     public double distanceTo(City otherCity) {
+        if (this.x == 0 || otherCity.x == 0) {
+            throw new IllegalStateException("City coordinates cannot be zero.");
+        }
         double dx = this.x - otherCity.x;
         double dy = this.y - otherCity.y;
         return Math.sqrt(dx * dx + dy * dy);
@@ -180,12 +177,6 @@ class City{
     //             ;
     // }
 
-    // public static City createCity(String coordinates) {
-    //     String[] coords = coordinates.split("\\s+");
-    //     double x = Double.parseDouble(coords[0]);
-    //     double y = Double.parseDouble(coords[1]);
-    //     return new City(x, y);
-    // }
 }
 
 class Individual {
@@ -195,7 +186,13 @@ class Individual {
     // コンストラクタや他のメソッドは省略
 
     public Individual(ArrayList<City> tour) {
-        this.tour = new ArrayList<>(tour);
+        this.tour = new ArrayList<>();
+        for (City city : tour) {
+            // 都市がnullでないことを確認してから追加
+            if (city != null) {
+                this.tour.add(new City(city.getIndex(), city.getX(), city.getY()));
+            }
+        }
         calculateFitness();
     }
 
@@ -223,9 +220,23 @@ class Individual {
     public void calculateFitness() {
         double totalDistance = 0;
         for (int i = 0; i < tour.size() - 1; i++) {
-            totalDistance += tour.get(i).distanceTo(tour.get(i + 1));
+            City city1 = tour.get(i);
+            City city2 = tour.get(i + 1);
+            if (city1 != null && city2 != null) {
+                totalDistance += city1.distanceTo(city2);
+            } else {
+                System.out.println("Null city found in the tour at index: " + i);
+                throw new IllegalStateException("City in the tour is null.");
+            }
         }
-        totalDistance += tour.get(tour.size() - 1).distanceTo(tour.get(0)); // 最後の都市から始点への距離
+        City lastCity = tour.get(tour.size() - 1);
+        City firstCity = tour.get(0);
+        if (lastCity != null && firstCity != null) {
+            totalDistance += lastCity.distanceTo(firstCity); // 最後の都市から始点への距離
+        } else {
+            System.out.println("Null city found at the beginning or end of the tour.");
+            throw new IllegalStateException("City in the tour is null.");
+        }
         fitness = totalDistance;
     }
 
