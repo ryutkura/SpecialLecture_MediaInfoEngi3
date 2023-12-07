@@ -16,7 +16,7 @@ public class TSP_GA {
     // “Ë‘R•ÏˆÙ—¦
     private static final double MUTATION_RATE = 0.02;
     // ¢‘ã”
-    private static final int NUM_GENERATIONS = 1000;
+    private static final int NUM_GENERATIONS = 2000;
 
     private static ArrayList<City> readCities(String filePath) {
         ArrayList<City> cities = new ArrayList<>();
