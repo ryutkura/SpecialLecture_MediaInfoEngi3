@@ -1,5 +1,6 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,11 +13,11 @@ public class TSP_GA {
     // 個体数
     private static final int POPULATION_SIZE = 20;
     // 一定回数の交叉を保証する回数
-    private static final int CROSSOVER_GUARANTEED_COUNT = 20;
+    private static final int CROSSOVER_GUARANTEED_COUNT = 500;
     // 突然変異率
-    private static final double MUTATION_RATE = 0.3;
+    private static final double MUTATION_RATE = 0.1;
     // 世代数
-    private static final int NUM_GENERATIONS = 1000;
+    private static final int NUM_GENERATIONS = 5;
 
     private static ArrayList<City> readCities(String filePath) {
         ArrayList<City> cities = new ArrayList<>();
@@ -37,7 +38,27 @@ public class TSP_GA {
         return cities;
     }
 
-    private static Individual crossover(Individual parent1, Individual parent2) {
+    private static void writeFitnessValuesToCSV(String fileName, Population population) {
+        try (FileWriter writer = new FileWriter(fileName)) {
+            // CSVヘッダーを書き込む
+            writer.append("Generation,Fitness\n");
+
+            // 各世代の適応度を書き込む
+            for (int generation = 0; generation < NUM_GENERATIONS; generation++) {
+                population.evaluate();
+                Individual bestIndividual = population.getBestIndividual();
+                double fitness = bestIndividual.getFitness();
+
+                writer.append(generation + "," + fitness + "\n");
+            }
+
+            System.out.println("CSVファイルに適応度が出力されました: " + fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Individual crossover(Individual parent1, Individual parent2) {
         // 1点交叉
         Random random = new Random();
         int crossoverPoint = random.nextInt(NUM_CITIES);
@@ -66,7 +87,7 @@ public class TSP_GA {
         return new Individual(childCities);
     }
     
-    private static Individual mutate(Individual individual) {
+    public static Individual mutate(Individual individual) {
         // 2つの都市をランダムに選択して位置を入れ替える
         Random random = new Random();
         int index1 = random.nextInt(NUM_CITIES);
@@ -90,21 +111,24 @@ public class TSP_GA {
 
         // 初期個体群を生成し、新しい都市データを使用して進化を開始
         Population population = new Population(POPULATION_SIZE, cities);
-
+        // 新しい個体群を生成
+            Population newPopulation = new Population();
         for (int generation = 0; generation < NUM_GENERATIONS; generation++) {
+            population.calculateFitness();
             // 適応度に基づいて個体群を評価
             population.evaluate();
     
             // エリート個体を選択
-            Individual elite = population.getElite();
+            // Individual elite = population.getElite();
+            population.applyElitism();
     
             // 表示
-            System.out.println("世代 " + generation + ": 最適な経路 - " + elite.getTour() + ", 適応度 - " + elite.getFitness());
-    
-            // 新しい個体群を生成
-            Population newPopulation = new Population();
+            // System.out.println("世代 " + generation + ": 最適な経路 - " + elite.getTour() + ", 適応度 - " + elite.getFitness());
     
             
+    
+            
+            System.out.println("個体" + newPopulation);
             int crossoverCount = 0;
             // 交叉を適用して新しい個体群を生成
             while (newPopulation.getSize() < POPULATION_SIZE) {
@@ -119,6 +143,7 @@ public class TSP_GA {
                     // 交叉回数が一定回数を超えたら次の世代に進む
                     break;
                 }
+                newPopulation.calculateFitness();
             }
 
             // 突然変異を適用
@@ -128,15 +153,22 @@ public class TSP_GA {
                     newPopulation.addIndividual(mutatedChild);
                 }
             }
+            
             // エリートを新しい個体群に追加
-            newPopulation.addIndividual(elite);
+            // newPopulation.addIndividual(elite);
             // 新しい個体群を更新
-            population = newPopulation;
+            // population = newPopulation;
+            // System.out.println("個体の内容" + population);
+            // // 適応度に基づいて個体群を評価
+            // population.evaluate();
         }
     
         // 最終的な最適な経路を出力
         Individual bestIndividual = population.getBestIndividual();
         System.out.println("最適な経路: " + bestIndividual.getTour() + ", 適応度: " + bestIndividual.getFitness());
+
+        // CSVファイルに適応度を出力
+        writeFitnessValuesToCSV("fitness_values.csv", population);
     }
 }
 
@@ -331,5 +363,23 @@ class Population {
 
         // 通常はここに到達しないはず
         return individuals.get(individuals.size() - 1);
+    }
+
+    public void applyElitism() {
+        // エリート戦略の適用
+        int eliteCount = (int) (20 * 0.1);
+        ArrayList<Individual> elites = new ArrayList<>(individuals.subList(0, eliteCount));
+
+        // 新しい個体群にエリート個体を追加
+        for (Individual elite : elites) {
+            individuals.add(new Individual(elite.getCities()));
+        }
+    }
+
+    public Population calculateFitness() {
+        for (Individual individual : individuals) {
+            individual.calculateFitness();
+        }
+        return this;
     }
 }
