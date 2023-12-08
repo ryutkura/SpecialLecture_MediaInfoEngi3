@@ -11,10 +11,10 @@ public class TSP_GA {
     private static final int NUM_CITIES = 29;
     // 個体数
     private static final int POPULATION_SIZE = 20;
-    // 交叉率
-    private static final double CROSSOVER_RATE = 0.8;
+    // 一定回数の交叉を保証する回数
+    private static final int CROSSOVER_GUARANTEED_COUNT = 20;
     // 突然変異率
-    private static final double MUTATION_RATE = 0.02;
+    private static final double MUTATION_RATE = 0.3;
     // 世代数
     private static final int NUM_GENERATIONS = 1000;
 
@@ -104,25 +104,32 @@ public class TSP_GA {
             // 新しい個体群を生成
             Population newPopulation = new Population();
     
-            // エリートを新しい個体群に追加
-            newPopulation.addIndividual(elite);
-    
-            // 交叉と突然変異を適用して新しい個体群を生成
+            
+            int crossoverCount = 0;
+            // 交叉を適用して新しい個体群を生成
             while (newPopulation.getSize() < POPULATION_SIZE) {
-                // 交叉を適用
-                if (Math.random() < CROSSOVER_RATE) {
+                if (crossoverCount < CROSSOVER_GUARANTEED_COUNT) {
+                    // 交叉を適用
                     Individual parent1 = population.selectParent();
                     Individual parent2 = population.selectParent();
                     Individual child = crossover(parent1, parent2);
                     newPopulation.addIndividual(child);
+                    crossoverCount++;
                 } else {
-                    // 交叉を適用しない場合はランダムに選択して突然変異を適用
-                    Individual randomIndividual = population.getRandomIndividual();
-                    Individual mutatedChild = mutate(randomIndividual);
+                    // 交叉回数が一定回数を超えたら次の世代に進む
+                    break;
+                }
+            }
+
+            // 突然変異を適用
+            for (int i = 0; i < newPopulation.getSize(); i++) {
+                if (Math.random() < MUTATION_RATE) {
+                    Individual mutatedChild = mutate(newPopulation.getIndividual(i));
                     newPopulation.addIndividual(mutatedChild);
                 }
             }
-    
+            // エリートを新しい個体群に追加
+            newPopulation.addIndividual(elite);
             // 新しい個体群を更新
             population = newPopulation;
         }
