@@ -17,7 +17,7 @@ public class TSP_GA {
     // 突然変異率
     private static final double MUTATION_RATE = 0.1;
     // 世代数
-    private static final int NUM_GENERATIONS = 5;
+    private static final int NUM_GENERATIONS = 2000;
 
     private static ArrayList<City> readCities(String filePath) {
         ArrayList<City> cities = new ArrayList<>();
@@ -128,7 +128,7 @@ public class TSP_GA {
             
     
             
-            System.out.println("個体" + newPopulation);
+            // System.out.println("個体" + newPopulation);
             int crossoverCount = 0;
             // 交叉を適用して新しい個体群を生成
             while (newPopulation.getSize() < POPULATION_SIZE) {
