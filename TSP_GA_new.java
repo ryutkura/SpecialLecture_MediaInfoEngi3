@@ -51,16 +51,21 @@ public class TSP_GA_new {
     public static int[][] InitRoot(int[][] root) {
         Random random = new Random();
 
-        for (int i = 0; i < POPULATION_SIZE; i++) {
-            // 0‚©‚ç28‚Ì®”‚ðd•¡‚È‚µ‚Å“ü—Í
-            for (int j = 0; j < NUM_CITIES; j++) {
-                int city;
-                do {
-                    city = random.nextInt(NUM_CITIES);
-                } while (contains(root[i], city));
-                root[i][j] = city;
+        for(int i=0;i<POPULATION_SIZE;i++){
+            for(int j=0;j<NUM_CITIES;j++){
+                root[i][j] = j;
             }
         }
+        for(int i=0;i<POPULATION_SIZE;i++){
+            for(int j=0;j<NUM_CITIES;j++){
+                int index = random.nextInt(j + 1);
+                // —v‘f‚Ì“ü‚ê‘Ö‚¦
+                int temp = root[i][j];
+                root[i][j] = root[i][index];
+                root[i][index] = temp;
+            }
+        }
+
         return root;
     }
     public static boolean contains(int[] array, int value) {
@@ -72,16 +77,13 @@ public class TSP_GA_new {
         return false;
     }
     public static void printMatrix(int[][] matrix) {
-        // static void printinit(int[][] indiv, double[] fit_value){
-            for(int i=0;i<matrix.length;i++){
-                for(int j=0;j<matrix[i].length;j++){
-                    System.out.print(" "+matrix[i][j]);
-                }
-                // System.out.println("F"+fit_value[i]);
-                System.out.println("");
+        for(int i=0;i<matrix.length;i++){
+            for(int j=0;j<matrix[i].length;j++){
+                System.out.print(" "+matrix[i][j]);
             }
-            System.out.println("---------------------------------");
-        
+            System.out.println("");
+        }
+        System.out.println("---------------------------------");
     }
 
     public static void main(String[] args){
