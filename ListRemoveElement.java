@@ -38,6 +38,11 @@ public class ListRemoveElement {
 
         // 結果を表示
         System.out.println("変更後のリストのサイズ: " + size1);
+        // 各要素の順番を格納するリスト
+        List<Integer> indicesList = getElementIndices(list);
+
+        // 結果を表示
+        System.out.println("各要素の順番: " + indicesList);
     }
 
     // リストの要素を削除し、詰めるメソッド
@@ -51,5 +56,18 @@ public class ListRemoveElement {
         list.remove(indexToRemove);
 
         // リストのサイズが変更されたら詰める処理は不要
+    }
+
+    // 各要素の順番を格納するメソッド
+    public static List<Integer> getElementIndices(List<Integer> list) {
+        List<Integer> indicesList = new ArrayList<>();
+
+        // 各要素の順番を算出してリストに格納
+        for (int i = 0; i < list.size(); i++) {
+            int index = list.indexOf(list.get(i));
+            indicesList.add(index);
+        }
+
+        return indicesList;
     }
 }
