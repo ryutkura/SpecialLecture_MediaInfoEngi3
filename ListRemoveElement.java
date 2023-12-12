@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class ListRemoveElement {
 
@@ -15,7 +16,14 @@ public class ListRemoveElement {
         // 結果を表示
         System.out.println("変更前のリストのサイズ: " + size);
 
-        int indexToRemove = 15; // 例として16番目の要素を削除
+        Random random = new Random();
+        // ランダムな2つの位置を生成
+        int index1 = random.nextInt(29);
+        int indexToRemove = index1;
+        System.out.println("削除した要素："+index1);
+        removeElement(list, indexToRemove);
+        indexToRemove = 3; // 例として16番目の要素を削除
+        System.out.println("削除した要素："+indexToRemove);
 
         // リストの要素を削除し、詰める
         removeElement(list, indexToRemove);
