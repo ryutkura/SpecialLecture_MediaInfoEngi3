@@ -1,5 +1,7 @@
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class TSP_GA_new {
@@ -17,6 +19,8 @@ public class TSP_GA_new {
 
     // 個体を管理する配列
     static int[][] root;
+    static int[][] order;
+    static int[][] childOrder;
     static double[] x;
     static double[] y;
     static double[] fitness_value;
@@ -154,6 +158,72 @@ public class TSP_GA_new {
         array[index3][index2] = temp;
         System.out.println("今回の突然変異は個体"+index3+"の要素"+index1+"と要素"+index2+"で起こりました");
     }
+    public static int[][] encodePopulation(int[][] population) {
+        int[][] order = new int[POPULATION_SIZE][NUM_CITIES];
+        for (int i = 0; i < POPULATION_SIZE; i++) {
+            order[i] = encode(population[i]);
+        }
+        return order;
+    }
+
+    public static int[] encode(int[] path) {
+        int[] order = new int[path.length];
+        List<Integer> cities = new ArrayList<>();
+        for (int i = 0; i < path.length; i++) {
+            cities.add(i);
+        }
+
+        for (int i = 0; i < path.length; i++) {
+            int index = cities.indexOf(path[i]);
+            order[i] = index + 1;
+            cities.remove(index);
+        }
+
+        return order;
+    }
+    
+
+    public static int[][] crossoverPopulation(int[][] population) {
+        int[][] childOrder = new int[POPULATION_SIZE][NUM_CITIES];
+        for (int i = 0; i < POPULATION_SIZE; i++) {
+            childOrder[i] = crossover(population[i], population[(i+1)%POPULATION_SIZE]);
+        }
+        return childOrder;
+    }
+
+    public static int[] crossover(int[] parent1, int[] parent2) {
+        Random random = new Random();
+        int crossPoint = random.nextInt(parent1.length);
+
+        int[] childOrder = new int[parent1.length];
+        System.arraycopy(parent1, 0, childOrder, 0, crossPoint);
+        System.arraycopy(parent2, crossPoint, childOrder, crossPoint, parent1.length - crossPoint);
+
+        return childOrder;
+    }
+
+    public static int[][] decodePopulation(int[][] population) {
+        int[][] decodedPath = new int[POPULATION_SIZE][NUM_CITIES];
+        for (int i = 0; i < POPULATION_SIZE; i++) {
+            decodedPath[i] = decode(population[i]);
+        }
+        return decodedPath;
+    }
+
+    public static int[] decode(int[] order) {
+        int[] path = new int[order.length];
+        List<Integer> cities = new ArrayList<>();
+        for (int i = 0; i < order.length; i++) {
+            cities.add(i);
+        }
+
+        for (int i = 0; i < order.length; i++) {
+            int city = cities.remove(order[i] - 1);
+            path[i] = city;
+        }
+
+        return path;
+    }
 
     public static void main(String[] args){
         // 遺伝情報を保持した個体を生成
@@ -193,6 +263,9 @@ public class TSP_GA_new {
                 // 平均値のみを出力
                 printave(fitness_value);
             }
+            order = encodePopulation(root);
+            childOrder = crossoverPopulation(order);
+            root = decodePopulation(childOrder);
         }
 
     }
