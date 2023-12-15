@@ -10,13 +10,13 @@ public class TSP_GA_new {
     // “ss‚Ì”
     private static final int NUM_CITIES = 29;
     // ŒÂ‘Ì”
-    private static final int POPULATION_SIZE = 20;
+    private static final int POPULATION_SIZE = 400;
     // ˆê’è‰ñ”‚ÌŒğ³‚ğ•ÛØ‚·‚é‰ñ”
     // private static final int CROSSOVER_GUARANTEED_COUNT = 500;
     // “Ë‘R•ÏˆÙ—¦
-    private static final double MUTATION_RATE = 1;
+    private static final double MUTATION_RATE = 0.5;
     // ¢‘ã”
-    private static final int NUM_GENERATIONS = 20;
+    private static final int NUM_GENERATIONS = 100;
 
     // ŒÂ‘Ì‚ğŠÇ—‚·‚é”z—ñ
     static int[][] root;
@@ -316,7 +316,7 @@ public class TSP_GA_new {
             root = decodePopulation(childOrder);
             fitness_value(root,fitness_value);
             root = replaceWithElite(root, eliteRoot, fitness_value);
-            printMatrix(root, fitness_value);
+            // printMatrix(root, fitness_value);
             try {
                 writeFitnessValuesToCSV(fitness_value, "fitness_values.csv");
             } catch (IOException e) {
