@@ -1,6 +1,7 @@
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
@@ -11,11 +12,11 @@ public class TSP_GA_new {
     // 個体数
     private static final int POPULATION_SIZE = 20;
     // 一定回数の交叉を保証する回数
-    private static final int CROSSOVER_GUARANTEED_COUNT = 500;
+    // private static final int CROSSOVER_GUARANTEED_COUNT = 500;
     // 突然変異率
-    private static final double MUTATION_RATE = 0.5;
+    private static final double MUTATION_RATE = 1;
     // 世代数
-    private static final int NUM_GENERATIONS = 2000;
+    private static final int NUM_GENERATIONS = 20;
 
     // 個体を管理する配列
     static int[][] root;
@@ -224,6 +225,72 @@ public class TSP_GA_new {
 
         return path;
     }
+    //エリート戦略を行うメソッド
+    public static int[][] applyEliteStrategy(int[][] root, double[] fitness_value) {
+        int eliteSize = (int) Math.round(POPULATION_SIZE * 0.1);
+
+        // Create list of indices
+        List<Integer> indices = new ArrayList<>();
+        for (int i = 0; i < POPULATION_SIZE; i++) {
+            indices.add(i);
+        }
+
+        // Sort indices based on fitness values
+        indices.sort(Comparator.comparingDouble(i -> fitness_value[i]));
+
+        // Get elite indices
+        List<Integer> eliteIndices = indices.subList(0, eliteSize);
+
+        // Save elite individuals
+        int[][] eliteRoot = new int[eliteSize][NUM_CITIES];
+        for (int i = 0; i < eliteSize; i++) {
+            eliteRoot[i] = root[eliteIndices.get(i)].clone();
+        }
+
+        return eliteRoot;
+    }
+
+    public static int[][] replaceWithElite(int[][] root, int[][] eliteRoot, double[] fitness_value) {
+        int eliteSize = eliteRoot.length;
+        int nonEliteSize = POPULATION_SIZE - eliteSize;
+
+        // Create list of indices
+        List<Integer> indices = new ArrayList<>();
+        for (int i = 0; i < POPULATION_SIZE; i++) {
+            indices.add(i);
+        }
+
+        // Sort indices based on fitness values
+        indices.sort(Comparator.comparingDouble(i -> fitness_value[i]));
+
+        // Get non-elite indices
+        List<Integer> nonEliteIndices = indices.subList(POPULATION_SIZE - nonEliteSize, POPULATION_SIZE);
+
+        // Replace non-elite individuals with elite ones
+        for (int i = 0; i < nonEliteSize; i++) {
+            root[nonEliteIndices.get(i)] = eliteRoot[i % eliteSize].clone();
+        }
+
+        return root;
+    }
+    public static void writeFitnessValuesToCSV(double[] fitness_value, String filename) 
+    throws IOException {
+        try (FileWriter writer = new FileWriter(filename, true)) {
+            double min = findMin(fitness_value);
+            double max = findMax(fitness_value);
+            double ave = findAverage(fitness_value);
+
+            writer.append(min + "," + max + "," + ave + "\n");
+        }
+    }
+    public static boolean contains(int[] array, int value) {
+        for (int i : array) {
+            if (i == value) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public static void main(String[] args){
         // 遺伝情報を保持した個体を生成
@@ -237,36 +304,24 @@ public class TSP_GA_new {
         readCoordinatesFromFile(filePath, x, y);
         // 初期個体をInitRootメソッドで生成
         root = InitRoot(root);
-        // 評価値を計算
-        fitness_value(root, fitness_value);
-        // 初期個体の内容と評価値を出力(デバッグ用メソッド)
-        printMatrix(root,fitness_value);
-        // 最小値のみを出力
-        printmin(fitness_value);
-        // 最大値のみを出力
-        printmax(fitness_value);
-        // 平均値のみを出力
-        printave(fitness_value);
-        for(int k=0;k<10;k++){
+        for (int generation = 0; generation < NUM_GENERATIONS; generation++) {  // Loop for 100 generations
             double randomValue = new Random().nextDouble();
             if(MUTATION_RATE>randomValue){
-                System.out.println("突然変異が起こりました。");
+                // System.out.println("突然変異が起こりました。");
                 mutation(root);
-                // 評価値を計算
-                fitness_value(root, fitness_value);
-                // 初期個体の内容と評価値を出力(デバッグ用メソッド)
-                printMatrix(root,fitness_value);
-                // 最小値のみを出力
-                printmin(fitness_value);
-                // 最大値のみを出力
-                printmax(fitness_value);
-                // 平均値のみを出力
-                printave(fitness_value);
             }
             order = encodePopulation(root);
+            int[][] eliteRoot = applyEliteStrategy(root, fitness_value);
             childOrder = crossoverPopulation(order);
             root = decodePopulation(childOrder);
+            fitness_value(root,fitness_value);
+            root = replaceWithElite(root, eliteRoot, fitness_value);
+            printMatrix(root, fitness_value);
+            try {
+                writeFitnessValuesToCSV(fitness_value, "fitness_values.csv");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-
     }
 }
