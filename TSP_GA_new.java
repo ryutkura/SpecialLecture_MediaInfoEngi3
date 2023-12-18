@@ -322,6 +322,7 @@ public class TSP_GA_new {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            printmin(fitness_value);
         }
     }
 }
