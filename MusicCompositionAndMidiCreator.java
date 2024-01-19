@@ -12,12 +12,42 @@ public class MusicCompositionAndMidiCreator {
         int num_measure = 4; // 小節の数
         int[][][] population = generateInitialPopulation(num_ind, num_code, num_measure);
 
+        // 交叉処理
+        performCrossover(population, 5); // 交叉回数は例として5回とする
+
         // MIDIファイルに書き込み
         try {
             writeToMidiFile(population, "generated_melody.mid");
             System.out.println("MIDIファイルが生成されました");
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    // 交叉を行うメソッド
+    public static void performCrossover(int[][][] population, int crossoverCount) {
+        Random random = new Random();
+        int num_ind = population.length;
+        int num_code = population[0].length;
+        int num_measure = population[0][0].length;
+
+        for (int measure = 0; measure < num_measure; measure++) {
+            for (int count = 0; count < crossoverCount; count++) {
+                // 交叉する個体のペアをランダムに選択
+                int ind1 = random.nextInt(num_ind);
+                int ind2 = random.nextInt(num_ind);
+
+                // 同一小節内で交叉実行
+                for (int j = 0; j < num_code; j++) {
+                    // 交叉ポイントをランダムに選択
+                    int crossoverPoint = random.nextInt(num_code);
+
+                    // 交叉（1点交叉）
+                    int temp = population[ind1][j][measure];
+                    population[ind1][j][measure] = population[ind2][crossoverPoint][measure];
+                    population[ind2][crossoverPoint][measure] = temp;
+                }
+            }
         }
     }
 
