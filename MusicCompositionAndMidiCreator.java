@@ -12,8 +12,12 @@ public class MusicCompositionAndMidiCreator {
         int num_measure = 4; // 小節の数
         int[][][] population = generateInitialPopulation(num_ind, num_code, num_measure);
 
+        // 個体の表示（デバッグ用）
+        // printPopulation(population);
         // 交叉処理
-        performCrossover(population, 5); // 交叉回数は例として5回とする
+        performCrossover(population, 10); // 交叉回数は例として10回とする
+        // 個体の表示（デバッグ用）
+        // printPopulation(population);
 
         // MIDIファイルに書き込み
         try {
@@ -21,6 +25,23 @@ public class MusicCompositionAndMidiCreator {
             System.out.println("MIDIファイルが生成されました");
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+    // 3次元配列 population の内容を表示するメソッド
+    public static void printPopulation(int[][][] population) {
+        int num_ind = population.length;
+        int num_code = population[0].length;
+        int num_measure = population[0][0].length;
+
+        for (int i = 0; i < num_ind; i++) {
+            System.out.println("個体 " + (i + 1) + ":");
+            for (int j = 0; j < num_code; j++) {
+                for (int k = 0; k < num_measure; k++) {
+                    System.out.print(population[i][j][k] + " ");
+                }
+                System.out.println();
+            }
+            System.out.println();
         }
     }
 
