@@ -6,16 +6,35 @@ public class MelodyEvaluationUtil {
 
     public static int evaluateMelody(int[][][] population, int individualIndex) {
         int score = 0;
-        // ここで各評価メソッドを呼び出して合計点を計算
-        // 例: score += evaluateChordConformity(melody, chordNotes);
-        score += evaluateMelodyFinalNote(int[] noteSequence, int[] harmonyNotes);
-        score += evaluateMelodyConnection(int[] noteSequence);
-        score += evaluateStrongBeatConformity(int[] noteSequence, int[] harmonyNotes, int[] accentuatedBeats);
-        // 例: score += evaluateChordConformity(melody, chordNotes);
-        // 例: score += evaluateChordConformity(melody, chordNotes);
-        // 例: score += evaluateChordConformity(melody, chordNotes);
+        int num_code = 4; // コードの数
+        
+        // 適切なコード（和音）を選択するための仮のコード配列
+        int[] cMajor = {60, 64, 67}; // C, E, G
+        int[] fMajor = {65, 69, 60}; // F, A, C
+        int[] gMajor = {67, 71, 62}; // G, B, D
+        
+        // 強拍の位置の仮の設定
+        int[] accentuatedBeats = {0, 2}; // 例えば1拍目と3拍目を強拍とする
+        
+        // 各コードに対する評価を行う
+        for (int j = 0; j < num_code; j++) {
+            int[] noteSequence = population[individualIndex][j]; // 個体の特定のコードに対応するメロディーライン
+            int[] harmonyNotes = cMajor; // 仮にCメジャーコードを使用
+    
+            if (j == 1) {
+                harmonyNotes = fMajor; // Fコードの場合
+            } else if (j == 2) {
+                harmonyNotes = gMajor; // Gコードの場合
+            }
+    
+            score += evaluateMelodyFinalNote(noteSequence, harmonyNotes);
+            score += evaluateMelodyConnection(noteSequence);
+            score += evaluateStrongBeatConformity(noteSequence, harmonyNotes, accentuatedBeats);
+        }
+    
         return score;
     }
+    
 
     // その他の静的メソッド...
     // // コードへの適合度を評価するメソッド

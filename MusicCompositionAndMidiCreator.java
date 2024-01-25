@@ -11,17 +11,28 @@ public class MusicCompositionAndMidiCreator {
         int num_ind = 10; // 個体数
         int num_code = 4; // コードの数
         int num_measure = 4; // 小節の数
+        int num_Gene = 10; //世代数
         int[][][] population = generateInitialPopulation(num_ind, num_code, num_measure);
         // 各メロディーに対する評価
         for (int i = 0; i < population.length; i++) {
             int score = MelodyEvaluationUtil.evaluateMelody(population, i);
             System.out.println("個体 " + i + " の評価: " + score);
         }
+        for (int j=0;j<num_Gene;j++){
+            //交叉して評価を世代数毎に繰り返す
+            System.out.println("ここから第"+(j+1)+"世代");
+            performCrossover(population, 10); // 交叉回数は例として10回とする
+            for (int i = 0; i < population.length; i++) {
+                int score = MelodyEvaluationUtil.evaluateMelody(population, i);
+                System.out.println("個体 " + i + " の評価: " + score);
+            }
+            System.out.println("ここまで第"+(j+1)+"世代");
+        }
 
         // 個体の表示（デバッグ用）
         // printPopulation(population);
         // 交叉処理
-        performCrossover(population, 10); // 交叉回数は例として10回とする
+        // performCrossover(population, 10); // 交叉回数は例として10回とする
         // 個体の表示（デバッグ用）
         // printPopulation(population);
 
