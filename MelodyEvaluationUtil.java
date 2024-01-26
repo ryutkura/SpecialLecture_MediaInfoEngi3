@@ -30,6 +30,8 @@ public class MelodyEvaluationUtil {
             score += evaluateMelodyFinalNote(noteSequence, harmonyNotes);
             score += evaluateMelodyConnection(noteSequence);
             score += evaluateStrongBeatConformity(noteSequence, harmonyNotes, accentuatedBeats);
+            score += evaluatePassingTone(noteSequence, harmonyNotes);
+            score += evaluateOrnamentalTone(noteSequence, harmonyNotes);
         }
     
         return score;
@@ -132,18 +134,52 @@ public static int evaluateMelodyConnection(int[] noteSequence) {
 }
 
 // 経過音の有無を評価するメソッド
-public static int evaluatePassingTone(int[] noteSequence) {
+// public static int evaluatePassingTone(int[] noteSequence) {
+//     int score = 0;
+//     // 評価ロジックを実装
+//     return score;
+// }
+public static int evaluatePassingTone(int[] noteSequence, int[] chordNotes) {
     int score = 0;
-    // 評価ロジックを実装
+    for (int i = 1; i < noteSequence.length - 1; i++) {
+        if (!isChordTone(noteSequence[i], chordNotes) && isChordTone(noteSequence[i - 1], chordNotes) && isChordTone(noteSequence[i + 1], chordNotes)) {
+            if (noteSequence[i - 1] < noteSequence[i] && noteSequence[i] < noteSequence[i + 1]) {
+                score++; // 上向きの経過音
+            } else if (noteSequence[i - 1] > noteSequence[i] && noteSequence[i] > noteSequence[i + 1]) {
+                score++; // 下向きの経過音
+            }
+        }
+    }
     return score;
 }
 
+
 // 刺繍音の有無を評価するメソッド
-public static int evaluateOrnamentalTone(int[] noteSequence) {
+// public static int evaluateOrnamentalTone(int[] noteSequence) {
+//     int score = 0;
+//     // 評価ロジックを実装
+//     return score;
+// }
+public static int evaluateOrnamentalTone(int[] noteSequence, int[] chordNotes) {
     int score = 0;
-    // 評価ロジックを実装
+    for (int i = 1; i < noteSequence.length - 1; i++) {
+        if (isChordTone(noteSequence[i - 1], chordNotes) && !isChordTone(noteSequence[i], chordNotes) && isChordTone(noteSequence[i + 1], chordNotes)) {
+            score++; // 刺繍音が存在
+        }
+    }
     return score;
 }
+
+private static boolean isChordTone(int note, int[] chordNotes) {
+    for (int chordNote : chordNotes) {
+        if (note == chordNote) {
+            return true; // 与えられた音符が和音音符である
+        }
+    }
+    return false;
+}
+
+
 
 // 強拍でのコード内音を評価するメソッド
 public static int evaluateStrongBeatConformity(int[] noteSequence, int[] harmonyNotes, int[] accentuatedBeats) {

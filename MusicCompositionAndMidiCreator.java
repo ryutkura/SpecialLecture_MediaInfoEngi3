@@ -6,44 +6,119 @@ import java.util.Random;
 
 public class MusicCompositionAndMidiCreator {
 
+    // public static void main(String[] args) {
+    //     // 初期個体の生成
+    //     int num_ind = 10; // 個体数
+    //     int num_code = 4; // コードの数
+    //     int num_measure = 4; // 小節の数
+    //     int num_Gene = 10; //世代数
+    //     int[][][] population = generateInitialPopulation(num_ind, num_code, num_measure);
+    //     // 各メロディーに対する評価
+    //     for (int i = 0; i < population.length; i++) {
+    //         int score = MelodyEvaluationUtil.evaluateMelody(population, i);
+    //         System.out.println("個体 " + i + " の評価: " + score);
+    //     }
+    //     for (int j=0;j<num_Gene;j++){
+    //         //交叉して評価を世代数毎に繰り返す
+    //         System.out.println("ここから第"+(j+1)+"世代");
+    //         performCrossover(population, 10); // 交叉回数は例として10回とする
+    //         for (int i = 0; i < population.length; i++) {
+    //             int score = MelodyEvaluationUtil.evaluateMelody(population, i);
+    //             System.out.println("個体 " + i + " の評価: " + score);
+    //         }
+    //         System.out.println("ここまで第"+(j+1)+"世代");
+    //     }
+
+    //     // 個体の表示（デバッグ用）
+    //     // printPopulation(population);
+    //     // 交叉処理
+    //     // performCrossover(population, 10); // 交叉回数は例として10回とする
+    //     // 個体の表示（デバッグ用）
+    //     // printPopulation(population);
+
+    //     // MIDIファイルに書き込み
+    //     try {
+    //         writeToMidiFile(population, "generated_melody.mid");
+    //         System.out.println("MIDIファイルが生成されました");
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //     }
+    // }
+
     public static void main(String[] args) {
-        // 初期個体の生成
-        int num_ind = 10; // 個体数
+        // 初期個体群の生成
+        int num_ind = 20; // 個体数
         int num_code = 4; // コードの数
         int num_measure = 4; // 小節の数
-        int num_Gene = 10; //世代数
+        int num_Gene = 2000; //世代数
         int[][][] population = generateInitialPopulation(num_ind, num_code, num_measure);
-        // 各メロディーに対する評価
-        for (int i = 0; i < population.length; i++) {
-            int score = MelodyEvaluationUtil.evaluateMelody(population, i);
-            System.out.println("個体 " + i + " の評価: " + score);
-        }
-        for (int j=0;j<num_Gene;j++){
-            //交叉して評価を世代数毎に繰り返す
-            System.out.println("ここから第"+(j+1)+"世代");
-            performCrossover(population, 10); // 交叉回数は例として10回とする
+    
+        // エリート個体を保存するための変数
+        int[][][] elite = new int[1][num_code][num_measure];
+        int eliteScore = Integer.MIN_VALUE;
+    
+        // 世代を通じた評価と交叉
+        for (int gen = 0; gen < num_Gene; gen++) {
+            System.out.println("世代: " + (gen + 1));
+    
+            // 現在の世代の個体群を評価
             for (int i = 0; i < population.length; i++) {
                 int score = MelodyEvaluationUtil.evaluateMelody(population, i);
+                // エリート個体の更新
+                if (score > eliteScore) {
+                    eliteScore = score;
+                    elite[0] = copyIndividual(population[i]);
+                }
                 System.out.println("個体 " + i + " の評価: " + score);
             }
-            System.out.println("ここまで第"+(j+1)+"世代");
+    
+            // 交叉処理
+            performCrossover(population, 10);
+    
+            // エリート個体を新しい世代に引き継ぐ
+            // population[0] = elite[0];
+            for (int j = 0; j < num_code; j++) {
+                for (int k = 0; k < num_measure; k++) {
+                    population[0][j][k] = elite[0][j][k];
+                }
+            }
+            
         }
-
-        // 個体の表示（デバッグ用）
-        // printPopulation(population);
-        // 交叉処理
-        // performCrossover(population, 10); // 交叉回数は例として10回とする
-        // 個体の表示（デバッグ用）
-        // printPopulation(population);
+    
+        // 結果のエリート個体の評価
+        System.out.println("最終エリート個体の評価: " + eliteScore);
 
         // MIDIファイルに書き込み
+        // try {
+        //     writeToMidiFile(population, "generated_melody.mid");
+        //     System.out.println("MIDIファイルが生成されました");
+        // } catch (Exception e) {
+        //     e.printStackTrace();
+        // }
+        
+        // 最終的なエリート個体のインデックスを取得するロジックを実装
+        int eliteIndex = getEliteIndividualIndex(population);
+
+        // エリート個体をMIDIファイルに書き込む
         try {
-            writeToMidiFile(population, "generated_melody.mid");
+            writeToMidiFile(population, "generated_melody.mid", eliteIndex);
             System.out.println("MIDIファイルが生成されました");
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
     }
+    
+    // 個体のコピーを作成するヘルパーメソッド
+    public static int[][] copyIndividual(int[][] individual) {
+        int[][] newIndividual = new int[individual.length][individual[0].length];
+        for (int i = 0; i < individual.length; i++) {
+            System.arraycopy(individual[i], 0, newIndividual[i], 0, individual[i].length);
+        }
+        return newIndividual;
+    }
+    
     // 3次元配列 population の内容を表示するメソッド
     public static void printPopulation(int[][][] population) {
         int num_ind = population.length;
@@ -116,28 +191,67 @@ public class MusicCompositionAndMidiCreator {
         return population;
     }
 
-    private static void writeToMidiFile(int[][][] population, String fileName) throws InvalidMidiDataException, IOException {
+    public static int getEliteIndividualIndex(int[][][] population) {
+        int bestScore = Integer.MIN_VALUE; // 最も高いスコアを保持するための変数。可能な限り低い値で初期化。
+        int bestIndex = -1; // 最も高いスコアを持つ個体のインデックス。存在しない場合のために-1で初期化。
+    
+        // 全ての個体に対してループを行い、それぞれを評価
+        for (int i = 0; i < population.length; i++) {
+            int score = MelodyEvaluationUtil.evaluateMelody(population, i); // 個体のスコアを評価
+    
+            // 現在の個体のスコアがこれまでの最高スコアよりも高い場合、情報を更新
+            if (score > bestScore) {
+                bestScore = score; // 最高スコアを更新
+                bestIndex = i; // 最高スコアを持つ個体のインデックスを更新
+            }
+        }
+    
+        // 最も高いスコアを持つ個体のインデックスを返す
+        return bestIndex;
+    }
+    
+
+    // private static void writeToMidiFile(int[][][] population, String fileName) throws InvalidMidiDataException, IOException {
+    //     Sequence sequence = new Sequence(Sequence.PPQ, 4);
+    //     Track track = sequence.createTrack();
+
+    //     // ランダムに個体を選択
+    //     Random random = new Random();
+    //     int selectedInd = random.nextInt(population.length);
+
+    //     // 選択した個体の音符をMIDIイベントとして追加
+    //     int tick = 0;
+    //     for (int j = 0; j < population[selectedInd].length; j++) {
+    //         for (int k = 0; k < population[selectedInd][j].length; k++) {
+    //             int note = population[selectedInd][j][k];
+    //             track.add(createNoteOnEvent(note, tick));
+    //             tick += 4; // 音符の長さ（固定）
+    //             track.add(createNoteOffEvent(note, tick));
+    //         }
+    //     }
+
+    //     File midiFile = new File(fileName);
+    //     MidiSystem.write(sequence, 1, midiFile);
+    // }
+    private static void writeToMidiFile(int[][][] population, String fileName, int eliteIndex) throws InvalidMidiDataException, IOException {
         Sequence sequence = new Sequence(Sequence.PPQ, 4);
         Track track = sequence.createTrack();
-
-        // ランダムに個体を選択
-        Random random = new Random();
-        int selectedInd = random.nextInt(population.length);
-
-        // 選択した個体の音符をMIDIイベントとして追加
+    
+        // エリート個体の音符をMIDIイベントとして追加
         int tick = 0;
-        for (int j = 0; j < population[selectedInd].length; j++) {
-            for (int k = 0; k < population[selectedInd][j].length; k++) {
-                int note = population[selectedInd][j][k];
+        for (int j = 0; j < population[eliteIndex].length; j++) {
+            for (int k = 0; k < population[eliteIndex][j].length; k++) {
+                int note = population[eliteIndex][j][k];
                 track.add(createNoteOnEvent(note, tick));
                 tick += 4; // 音符の長さ（固定）
                 track.add(createNoteOffEvent(note, tick));
             }
         }
-
+    
         File midiFile = new File(fileName);
         MidiSystem.write(sequence, 1, midiFile);
     }
+    
 
     private static MidiEvent createNoteOnEvent(int nKey, long tick) throws InvalidMidiDataException {
         return new MidiEvent(new ShortMessage(ShortMessage.NOTE_ON, 0, nKey, 0x60), tick);
